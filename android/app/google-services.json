@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "183220988566",
+    "project_id": "sleepfy-24c26",
+    "storage_bucket": "sleepfy-24c26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183220988566:android:6ee35bd3f19b2dc5c470b7",
+        "android_client_info": {
+          "package_name": "com.pacosotelo.sleepfy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC52xQjUAwXSpI-I_88vrQ6Z4KDvADzotw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

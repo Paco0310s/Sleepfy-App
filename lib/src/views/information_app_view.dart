@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/widgets/my_button.dart';
+import 'package:sleepfy/src/widgets/my_text.dart';
 import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,100 +12,138 @@ class InformationAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.kBackgroundColor,
       appBar: AppBar(
-        title: MyTitleAppBar(title: 'Conoce más sobre el insomnio'),
+        title: const MyTitleAppBar(title: 'Conoce más sobre el insomnio'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionTitle(title: '¿Qué es el Insomnio?'),
-            Text(
-              'El insomnio es un trastorno del sueño caracterizado por la dificultad para quedarse dormido, mantenerse dormido o lograr un sueño reparador. Puede ser de corta duración (insomnio agudo) o durar mucho tiempo (insomnio crónico).',
-              style: TextStyle(color: Color(0xFF6C757D), fontSize: 16),
-              textAlign: TextAlign.justify,
-            ),
-            SectionTitle(title: 'Características del Insomnio'),
-            SectionContent(
-              content: '◆ Dificultad para conciliar el sueño: Puede tardarse más de 30 minutos en quedarse dormido.\n'
-                  '◆ Despertares frecuentes durante la noche.\n'
-                  '◆ Despertarse demasiado temprano.\n'
-                  '◆ Sueño no reparador.',
-            ),
-            SectionTitle(title: '¿Cómo Afecta el Insomnio?'),
-            SectionContent(
-              content: '◆ Fatiga y Cansancio.\n'
-                  '◆ Problemas de Concentración y Memoria.\n'
-                  '◆ Irritabilidad y Cambios de Humor.\n'
-                  '◆ Afectación en el Sistema Inmune.\n'
-                  '◆ Riesgo de Problemas de Salud Crónicos.',
-            ),
-            SectionTitle(title: 'La Importancia del Sueño'),
-            SectionContent(
+            _buildInfoCard(
+              title: '¿Qué es el Insomnio?',
+              icon: Icons.help_outline_rounded,
+              iconColor: Constants.kSecondaryColor,
               content:
-                  'El sueño es un proceso biológico esencial para la salud y el bienestar. Durante el sueño, el cuerpo y la mente pasan por procesos de recuperación vitales:\n'
-                  '◆ Reparación y Crecimiento.\n'
-                  '◆ Procesamiento Emocional y Memoria.\n'
-                  '◆ Regulación Hormonal.\n'
-                  '◆ Desempeño Físico y Mental.',
+                  'El insomnio es un trastorno del sueño caracterizado por la dificultad para conciliar el sueño, mantenerse dormido o lograr un descanso verdaderamente reparador. Puede manifestarse de forma aguda (corto plazo) o crónica (más de 3 meses).',
             ),
-            const Gap(20),
-            SectionTitle(title: 'Para conocer más al respecto:'),
-            LinkButton(
-              title: 'MedlinePlus',
+            const Gap(14),
+            _buildInfoCard(
+              title: 'Características del Insomnio',
+              icon: Icons.warning_amber_rounded,
+              iconColor: const Color(0xFFF59E0B),
+              content:
+                  '◆ Dificultad para conciliar el sueño (tardar más de 30 minutos).\n'
+                  '◆ Despertares frecuentes e interrupciones durante la noche.\n'
+                  '◆ Despertarse mucho antes de lo deseado sin poder volver a dormir.\n'
+                  '◆ Sensación de sueño no reparador y cansancio diurno.',
+            ),
+            const Gap(14),
+            _buildInfoCard(
+              title: '¿Cómo Afecta el Insomnio?',
+              icon: Icons.healing_rounded,
+              iconColor: Constants.kErrorColor,
+              content:
+                  '◆ Fatiga persistente y bajo nivel de energía.\n'
+                  '◆ Dificultad para concentrarse y problemas de retención o memoria.\n'
+                  '◆ Mayor irritabilidad, ansiedad y fluctuaciones del estado de ánimo.\n'
+                  '◆ Disminución en la respuesta del sistema inmunológico.',
+            ),
+            const Gap(14),
+            _buildInfoCard(
+              title: 'La Importancia Vital del Sueño',
+              icon: Icons.spa_rounded,
+              iconColor: Constants.kMintColor,
+              content:
+                  'Durante las fases profundas del sueño se regulan hormonas clave como la melatonina y el cortisol, se restauran las células y el cerebro consolida los recuerdos y aprendizajes del día.',
+            ),
+            const Gap(24),
+            const Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: MyText(
+                'Fuentes y recursos médicos recomendados',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Constants.kTextColor,
+              ),
+            ),
+            const Gap(10),
+            const LinkButton(
+              title: 'MedlinePlus en Español',
               url: 'https://medlineplus.gov/spanish/',
             ),
-            LinkButton(
-              title: 'Mayo Clinic',
+            const LinkButton(
+              title: 'Mayo Clinic - Trastornos del Sueño',
               url: 'https://www.mayoclinic.org/es-es/',
             ),
-            LinkButton(
+            const LinkButton(
               title: 'National Sleep Foundation (NSF)',
               url: 'https://www.sleepfoundation.org/',
             ),
-            LinkButton(
-              title: 'CDC - Centros para el Control y la Prevención de Enfermedades',
+            const LinkButton(
+              title: 'CDC - Salud y Sueño',
               url: 'https://www.cdc.gov/sleep/index.html',
             ),
+            const Gap(20),
           ],
         ),
       ),
     );
   }
-}
 
-class SectionTitle extends StatelessWidget {
-  final String title;
-
-  const SectionTitle({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Color(0xFF212529),
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
+  Widget _buildInfoCard({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required String content,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Constants.kSurfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Constants.kBorderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class SectionContent extends StatelessWidget {
-  final String content;
-
-  const SectionContent({super.key, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      content,
-      style: TextStyle(color: Color(0xFF6C757D), fontSize: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const Gap(12),
+              Expanded(
+                child: MyText(
+                  title,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Constants.kTextColor,
+                ),
+              ),
+            ],
+          ),
+          const Gap(12),
+          MyText(
+            content,
+            fontSize: 14,
+            color: Constants.kTextSecondaryColor,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -127,22 +167,24 @@ class LinkButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: MyButton(
+        color: Constants.kSurfaceLightColor,
         text: title,
         onPressed: _launchURL,
         child: Row(
           children: [
             Expanded(
-              child: Text(
+              child: MyText(
                 title,
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.justify,
-                overflow: TextOverflow.ellipsis,
+                color: Constants.kTextColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
               ),
             ),
-            Gap(20),
-            Icon(
-              Icons.open_in_new,
-              color: Colors.white,
+            const Gap(10),
+            const Icon(
+              Icons.open_in_new_rounded,
+              color: Constants.kSecondaryColor,
+              size: 18,
             ),
           ],
         ),

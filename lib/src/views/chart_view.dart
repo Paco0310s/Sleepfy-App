@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sleepfy/models/sleep_schedule_model.dart';
@@ -10,8 +8,8 @@ import 'package:fl_chart/fl_chart.dart';
 class ChartView extends StatefulWidget {
   const ChartView({super.key});
 
-  final Color barBackgroundColor = Constants.kBackgroundColor;
-  final Color barColor = Constants.kPrimaryColor;
+  final Color barBackgroundColor = Constants.kSurfaceLightColor;
+  final Color barColor = Constants.kSecondaryColor;
 
   @override
   State<StatefulWidget> createState() => ChartViewState();
@@ -23,30 +21,79 @@ class ChartViewState extends State<ChartView> {
     final ControlDreamsProvider prov = Provider.of<ControlDreamsProvider>(context);
     final List<SleepSchedule> sleepSchedules = prov.sleepSchedules;
 
-    return AspectRatio(
-      aspectRatio: 1.1,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Text(
-              'Horas de sueño',
-              style: TextStyle(
-                color: Constants.kBackgroundColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Constants.kSurfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Constants.kBorderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.bar_chart_rounded,
+                      color: Constants.kSecondaryColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Horas de sueño',
+                    style: TextStyle(
+                      color: Constants.kTextColor,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: BarChart(
-                data(sleepSchedules),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Constants.kSurfaceLightColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Constants.kBorderColor),
+                ),
+                child: const Text(
+                  'Esta semana',
+                  style: TextStyle(
+                    color: Constants.kTextSecondaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          AspectRatio(
+            aspectRatio: 1.4,
+            child: BarChart(
+              data(sleepSchedules),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -60,13 +107,18 @@ class ChartViewState extends State<ChartView> {
       barRods: [
         BarChartRodData(
           toY: y,
-          // color: isBeforeOrToday(x + 1) ? Colors.transparent : widget.barColor,
-          color: widget.barColor,
-          borderRadius: BorderRadius.zero,
-          // borderDashArray: isBeforeOrToday(x + 1) ? [5, 5] : null,
-          borderDashArray: null,
-          width: 22,
-          borderSide: BorderSide(color: widget.barColor, width: 2.0),
+          gradient: const LinearGradient(
+            colors: [Constants.kSecondaryColor, Constants.kPrimaryColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+          width: 18,
+          backDrawRodData: BackgroundBarChartRodData(
+            show: true,
+            toY: 12,
+            color: Constants.kSurfaceLightColor.withValues(alpha: 0.4),
+          ),
         ),
       ],
     );
@@ -74,87 +126,42 @@ class ChartViewState extends State<ChartView> {
 
   Widget getLeftTitles(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Constants.kBackgroundColor,
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
+      color: Constants.kTextSecondaryColor,
+      fontWeight: FontWeight.w500,
+      fontSize: 11,
     );
 
-    return SideTitleWidget(
-      meta: meta,
-      // axisSide: meta.axisSide,
-      child: Text(
-        '${value.toInt()}',
-        style: style,
-        textAlign: TextAlign.center,
-      ),
-    );
+    if (value == 0 || value == 4 || value == 8 || value == 12) {
+      return SideTitleWidget(
+        meta: meta,
+        child: Text(
+          '${value.toInt()}h',
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget getBottomTitles(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Constants.kBackgroundColor,
-      fontWeight: FontWeight.bold,
+      color: Constants.kTextSecondaryColor,
+      fontWeight: FontWeight.w600,
       fontSize: 12,
     );
     List<String> days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
-    Widget text = Text(
-      days[value.toInt()],
-      style: style,
-    );
+    int index = value.toInt();
+    if (index < 0 || index >= days.length) return const SizedBox.shrink();
 
     return SideTitleWidget(
       meta: meta,
-      // axisSide: meta.axisSide,
-      space: 16,
-      child: text,
-    );
-  }
-
-  BarChartData randomData() {
-    return BarChartData(
-      maxY: 12,
-      barTouchData: BarTouchData(
-        enabled: false,
+      space: 10,
+      child: Text(
+        days[index],
+        style: style,
       ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: getBottomTitles,
-            reservedSize: 35,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            reservedSize: 40,
-            showTitles: true,
-            getTitlesWidget: getLeftTitles,
-          ),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
-      barGroups: List.generate(
-        7,
-        (i) => makeGroupData(
-          i,
-          Random().nextInt(14).toDouble() + 10,
-        ),
-      ),
-      gridData: const FlGridData(show: false),
     );
   }
 
@@ -162,7 +169,20 @@ class ChartViewState extends State<ChartView> {
     return BarChartData(
       maxY: 12,
       barTouchData: BarTouchData(
-        enabled: false,
+        enabled: true,
+        touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (_) => Constants.kSurfaceLightColor,
+          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+            return BarTooltipItem(
+              '${rod.toY.toInt()} horas',
+              const TextStyle(
+                color: Constants.kTextColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            );
+          },
+        ),
       ),
       titlesData: FlTitlesData(
         show: true,
@@ -170,29 +190,33 @@ class ChartViewState extends State<ChartView> {
           sideTitles: SideTitles(
             showTitles: true,
             getTitlesWidget: getBottomTitles,
-            reservedSize: 35,
+            reservedSize: 32,
           ),
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
-            reservedSize: 40,
+            reservedSize: 32,
             showTitles: true,
             getTitlesWidget: getLeftTitles,
           ),
         ),
         topTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
+          sideTitles: SideTitles(showTitles: false),
         ),
         rightTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
+          sideTitles: SideTitles(showTitles: false),
         ),
       ),
-      borderData: FlBorderData(
-        show: false,
+      borderData: FlBorderData(show: false),
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: false,
+        horizontalInterval: 4,
+        getDrawingHorizontalLine: (value) => FlLine(
+          color: Constants.kBorderColor.withValues(alpha: 0.5),
+          strokeWidth: 1,
+          dashArray: [4, 4],
+        ),
       ),
       barGroups: List.generate(
         7,
@@ -201,7 +225,6 @@ class ChartViewState extends State<ChartView> {
           getDataFromADay(sleepSchedules, i),
         ),
       ),
-      gridData: const FlGridData(show: false),
     );
   }
 }
@@ -228,13 +251,7 @@ bool twoDatesAreTheSameDay(DateTime date1, DateTime date2) {
 }
 
 double getHoursDifference(DateTime start, DateTime end) {
-  return end.difference(start).inHours.toDouble();
+  final diffMinutes = end.difference(start).inMinutes;
+  final hours = diffMinutes / 60.0;
+  return hours > 0 ? (hours > 24 ? 24.0 : hours) : 0.0;
 }
-
-// bool isBeforeOrToday(int x) {
-//   final DateTime dateNow = DateTime.now();
-
-//   final day = 6;
-
-//   return x > day;
-// }

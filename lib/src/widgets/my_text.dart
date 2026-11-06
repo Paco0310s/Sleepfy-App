@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sleepfy/src/utils/constants.dart';
 
 class MyText extends StatelessWidget {
   final String text;
@@ -26,8 +27,9 @@ class MyText extends StatelessWidget {
       text,
       style: TextStyle(
         fontSize: fontSize,
-        color: color,
+        color: color ?? Constants.kTextColor,
         fontWeight: fontWeight,
+        letterSpacing: 0.15,
       ),
       textAlign: textAlign,
       overflow: overflow,

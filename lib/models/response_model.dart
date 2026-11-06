@@ -1,6 +1,6 @@
 class ResponseModel {
   String message;
-  Map<String, dynamic> data;
+  dynamic data;
   int? status;
 
   ResponseModel({

@@ -1,21 +1,34 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart' as getx;
 import 'package:sleepfy/models/response_model.dart';
 import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/utils/my_loading.dart';
 import 'package:sleepfy/src/utils/my_snackbar.dart';
 import 'package:sleepfy/src/utils/shared_prefences.dart';
+import 'package:sleepfy/src/views/breathing_exercise_view.dart';
+import 'package:sleepfy/src/views/home_view.dart';
 import 'package:sleepfy/src/views/login_view.dart';
+import 'package:sleepfy/src/views/sleep_calculator_view.dart';
+import 'package:sleepfy/src/widgets/my_button.dart';
 import 'package:sleepfy/src/widgets/my_text.dart';
 
 class DioController {
   static Dio get instance => _dio;
-  // static const String _baseUrl = 'http://localhost:3000/api/';
-  // static const String _baseUrl = 'http://192.168.137.1:3000/api/';
-  static const String _baseUrl = 'https://sleepfy.api.pacosotelo.com/api/';
-  static final Dio _dio = Dio(BaseOptions(contentType: Headers.jsonContentType, responseType: ResponseType.json))
-    ..interceptors.add(
+  // Support configurable API URL via --dart-define=API_URL=...
+  static const String _baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'https://sleepfy.api.pacosotelo.com/api/',
+  );
+  static final Dio _dio = Dio(
+    BaseOptions(
+      contentType: Headers.jsonContentType,
+      responseType: ResponseType.json,
+      connectTimeout: const Duration(seconds: 25),
+      receiveTimeout: const Duration(seconds: 45),
+    ),
+  )..interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           final headers = options.headers;
@@ -51,35 +64,49 @@ class DioController {
       debugPrint(e.toString());
 
       if (MyLoading.isLoading) MyLoading.closeLoading();
-      String? message = e.response?.data['message'] ?? e.response?.data['error'];
+      String? message;
+      final respData = e.response?.data;
+      if (respData is Map) {
+        final rawMsg = respData['message'] ?? respData['error'];
+        if (rawMsg is List && rawMsg.isNotEmpty) {
+          message = rawMsg.first.toString();
+        } else if (rawMsg != null) {
+          message = rawMsg.toString();
+        }
+      }
 
-      switch (e.type) {
-        case DioExceptionType.receiveTimeout:
-          MySnackBar.showSnackBarError('Tiempo de espera de respuesta agotado');
-          break;
-        case DioExceptionType.sendTimeout:
-          MySnackBar.showSnackBarError('Tiempo de espera de envío agotado');
-          break;
-        case DioExceptionType.cancel:
-          MySnackBar.showSnackBarError('Petición cancelada');
-          break;
-        case DioExceptionType.connectionTimeout:
-          MySnackBar.showSnackBarError('Tiempo de espera de conexión agotado');
-          break;
-        case DioExceptionType.badCertificate:
-          toLogin();
-          MySnackBar.showSnackBarError('Su sesión ha expirado, inicie sesión nuevamente');
-          break;
-        case DioExceptionType.badResponse:
-          MySnackBar.showSnackBarError(message ?? 'Ocurrió un error, intente nuevamente');
-          break;
-        case DioExceptionType.connectionError:
-          getx.Get.off(() => const ReloadView());
-          MySnackBar.showSnackBarError('Verifique su conexión a internet');
-          break;
-        case DioExceptionType.unknown:
-          MySnackBar.showSnackBarError('Error desconocido');
-          break;
+      if (showLoading) {
+        switch (e.type) {
+          case DioExceptionType.receiveTimeout:
+            MySnackBar.showSnackBarError('Tiempo de espera de respuesta agotado');
+            break;
+          case DioExceptionType.sendTimeout:
+            MySnackBar.showSnackBarError('Tiempo de espera de envío agotado');
+            break;
+          case DioExceptionType.cancel:
+            MySnackBar.showSnackBarError('Petición cancelada');
+            break;
+          case DioExceptionType.connectionTimeout:
+            MySnackBar.showSnackBarError('Tiempo de espera de conexión agotado');
+            break;
+          case DioExceptionType.badCertificate:
+            toLogin();
+            MySnackBar.showSnackBarError('Su sesión ha expirado, inicie sesión nuevamente');
+            break;
+          case DioExceptionType.badResponse:
+            MySnackBar.showSnackBarError(message ?? 'Ocurrió un error, intente nuevamente');
+            break;
+          case DioExceptionType.connectionError:
+            if (UserPreferences.token == null) {
+              MySnackBar.showSnackBarError('Verifique su conexión a internet');
+            } else {
+              getx.Get.to(() => const ReloadView());
+            }
+            break;
+          case DioExceptionType.unknown:
+            MySnackBar.showSnackBarError('Error desconocido');
+            break;
+        }
       }
 
       if (e.response?.statusCode == 401) toLogin();
@@ -88,8 +115,8 @@ class DioController {
     }
   }
 
-  static void toLogin() {
-    UserPreferences.removeToken();
+  static void toLogin() async {
+    await UserPreferences.logout();
     getx.Get.offAll(() => const LoginView());
   }
 }
@@ -100,26 +127,116 @@ class ReloadView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(25),
-        child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MyText(
-                'Verifique su conexión a internet y reinicie la aplicación',
-                textAlign: TextAlign.center,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Constants.kBackgroundColor,
+      backgroundColor: Constants.kBackgroundColor,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Constants.kSurfaceColor,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: Constants.kBorderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     getx.Get.back();
-              //   },
-              //   child: const Text('Reintentar'),
-              // ),
-            ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Constants.kWarningColor.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.wifi_off_rounded,
+                      size: 46,
+                      color: Constants.kWarningColor,
+                    ),
+                  ),
+                  const Gap(18),
+                  const MyText(
+                    'Sin conexión con el servidor',
+                    textAlign: TextAlign.center,
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: Constants.kTextColor,
+                  ),
+                  const Gap(8),
+                  const MyText(
+                    'Verifica tu conexión a internet. Mientras tanto, puedes seguir usando tus herramientas de descanso en Modo Offline.',
+                    textAlign: TextAlign.center,
+                    fontSize: 13.5,
+                    color: Constants.kTextSecondaryColor,
+                  ),
+                  const Gap(24),
+                  MyButton(
+                    color: Constants.kPrimaryColor,
+                    text: 'Volver al Inicio / Reintentar',
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
+                        Gap(8),
+                        MyText(
+                          'Volver al Inicio / Reintentar',
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      if (UserPreferences.token != null) {
+                        getx.Get.offAll(() => const HomeView());
+                      } else {
+                        getx.Get.offAll(() => const LoginView());
+                      }
+                    },
+                  ),
+                  const Gap(12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Constants.kBorderColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.air_rounded, color: Constants.kMintColor, size: 18),
+                          label: const MyText('Respirar 4-7-8', fontSize: 12.5, color: Constants.kTextColor),
+                          onPressed: () => getx.Get.to(() => const BreathingExerciseView()),
+                        ),
+                      ),
+                      const Gap(10),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Constants.kBorderColor),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.calculate_outlined, color: Constants.kSecondaryColor, size: 18),
+                          label: const MyText('Ciclos 90m', fontSize: 12.5, color: Constants.kTextColor),
+                          onPressed: () => getx.Get.to(() => const SleepCalculatorView()),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

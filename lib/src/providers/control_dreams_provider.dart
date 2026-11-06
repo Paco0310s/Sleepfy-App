@@ -27,7 +27,19 @@ class ControlDreamsProvider extends ChangeNotifier {
     getSleepSchedules();
   }
 
+  void reset() {
+    _sleepSchedules = [];
+    loadingSendSchedule = false;
+    loadingGetSchedules = false;
+    notifyListeners();
+  }
+
   Future<void> getSleepSchedules() async {
+    if (UserPreferences.id == null) {
+      _sleepSchedules = [];
+      notifyListeners();
+      return;
+    }
     loadingGetSchedules = true;
     notifyListeners();
 
@@ -50,10 +62,13 @@ class ControlDreamsProvider extends ChangeNotifier {
   void saveData() async {
     final DateTime now = DateTime.now();
 
+    final bool sleptYesterday = _timeStart.hour > _timeEnd.hour ||
+        (_timeStart.hour == _timeEnd.hour && _timeStart.minute > _timeEnd.minute);
+
     final DateTime start = DateTime(
       now.year,
       now.month,
-      now.day - 1,
+      sleptYesterday ? now.day - 1 : now.day,
       _timeStart.hour,
       _timeStart.minute,
     );

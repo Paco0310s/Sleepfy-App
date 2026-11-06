@@ -1,9 +1,9 @@
 class Validations {
   static String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return 'El correo electrónico no puede estar vacío';
     }
-    if (!EmailValidator.validate(value)) {
+    if (!EmailValidator.validate(value.trim())) {
       return 'Correo electrónico no válido';
     }
     return null;
@@ -16,25 +16,28 @@ class Validations {
     if (value.length < 8) {
       return 'La contraseña debe tener al menos 8 caracteres';
     }
+    if (value.length > 64) {
+      return 'La contraseña no puede exceder 64 caracteres';
+    }
     return null;
   }
 
   static String? validateName(String? value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return 'El nombre no puede estar vacío';
     }
-    if (value.length < 3) {
-      return 'El nombre debe tener al menos 3 caracteres';
+    if (value.trim().length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
     }
     return null;
   }
 
   static String? validateLastName(String? value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return 'El apellido no puede estar vacío';
     }
-    if (value.length < 3) {
-      return 'El apellido debe tener al menos 3 caracteres';
+    if (value.trim().length < 2) {
+      return 'El apellido debe tener al menos 2 caracteres';
     }
     return null;
   }

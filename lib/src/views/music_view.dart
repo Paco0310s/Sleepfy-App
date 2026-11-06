@@ -1,41 +1,102 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:sleepfy/src/utils/constants.dart';
+import 'package:sleepfy/src/utils/my_snackbar.dart';
+import 'package:sleepfy/src/widgets/my_text.dart';
 import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MusicView extends StatelessWidget {
-  MusicView({super.key});
+class MusicView extends StatefulWidget {
+  const MusicView({super.key});
+
+  @override
+  State<MusicView> createState() => _MusicViewState();
+}
+
+class _MusicViewState extends State<MusicView> {
+  Timer? _sleepTimer;
+  int _remainingSeconds = 0;
+  int _selectedMinutes = 0;
 
   final List<MusicCardData> musicData = [
     MusicCardData(
       title: 'Peaceful Piano',
-      description: 'Hermosas piezas de piano para la calma.',
+      description: 'Hermosas piezas de piano acústico para la calma y el sueño.',
       imageUrl: 'https://i.scdn.co/image/ab67706f0000000283da657fca565320e9311863',
       link: 'https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO?si=3e9f7db161fa4dd4',
     ),
     MusicCardData(
       title: 'Nature Sounds',
-      description: 'Sonidos naturales: lluvia, ríos y aves.',
+      description: 'Sonidos inmersivos: lluvia suave, olas del mar y viento nocturno.',
       imageUrl: 'https://i.scdn.co/image/ab67706f00000002e909a20522cfdb017c798ba8',
       link: 'https://open.spotify.com/playlist/37i9dQZF1DX4PP3DA4J0N8?si=5fbffde6e8dc4f61',
     ),
     MusicCardData(
       title: 'Meditative Mind',
-      description: 'Música para meditación y relajación profunda.',
+      description: 'Frecuencias armónicas para meditación y sueño profundo.',
       imageUrl: 'https://seed-mix-image.spotifycdn.com/v6/img/artist/1PTLyE54UyxphMo43yaSc7/es-419/default',
       link: 'https://open.spotify.com/playlist/37i9dQZF1EIXHxNW9W3Wef?si=07d8798603bd49cc',
     ),
     MusicCardData(
       title: 'Ambient Chill',
-      description: 'Melodías suaves para desconectar.',
+      description: 'Paisajes sonoros electrónicos suaves para desconectar la mente.',
       imageUrl: 'https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c7cfb8d8736d7ec67b24670ca',
       link: 'https://open.spotify.com/playlist/1kqBP6eE24L0agNpnTIKtc?si=0673adc81d274ae3',
     ),
   ];
 
+  @override
+  void dispose() {
+    _sleepTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer(int minutes) {
+    _sleepTimer?.cancel();
+    HapticFeedback.selectionClick();
+    if (minutes == 0) {
+      setState(() {
+        _selectedMinutes = 0;
+        _remainingSeconds = 0;
+      });
+      return;
+    }
+
+    setState(() {
+      _selectedMinutes = minutes;
+      _remainingSeconds = minutes * 60;
+    });
+
+    _sleepTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+      if (_remainingSeconds <= 1) {
+        timer.cancel();
+        HapticFeedback.mediumImpact();
+        setState(() {
+          _remainingSeconds = 0;
+          _selectedMinutes = 0;
+        });
+        MySnackBar.showSnackBarSuccess('🌙 Tu temporizador nocturno ha finalizado. ¡Dulces sueños!');
+      } else {
+        setState(() {
+          _remainingSeconds--;
+        });
+      }
+    });
+  }
+
+  String _formatCountdown(int totalSeconds) {
+    final m = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final s = (totalSeconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
   void _launchURL(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       throw 'Could not launch $url';
     }
@@ -44,170 +105,247 @@ class MusicView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.kBackgroundColor,
       appBar: AppBar(
-        title: MyTitleAppBar(title: 'Música y sonidos relajantes'),
+        title: const MyTitleAppBar(title: 'Música y Sonidos Relajantes'),
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'La música y los sonidos relajantes son perfectos para crear un ambiente de calma y bienestar antes de dormir. Aquí te damos algunas sugerencias:\n\n'
-              '◆ Música instrumental: Pianistas como Ludovico Einaudi o Max Richter tienen piezas muy tranquilizadoras.\n'
-              '◆ Sonidos de la naturaleza: Grabaciones de lluvia, olas del mar o cantos de pájaros pueden ser muy relajantes.\n'
-              '◆ Música de meditación: Artistas como Deuter o Anoushka Shankar ofrecen melodías suaves ideales para la meditación.\n'
-              '◆ Sonidos binaurales: Estas grabaciones pueden ayudar a inducir un estado de relajación profunda.\n\n'
-              'Te presentamos algunas recomendaciones de listas de reproducción en Spotify que son perfectas para relajarse:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF212529),
+          // Banner introductorio
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              textAlign: TextAlign.justify,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.headphones_rounded, color: Constants.kSecondaryColor, size: 24),
+                    Gap(10),
+                    MyText(
+                      'Sonidos para Inducir el Sueño',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Constants.kTextColor,
+                    ),
+                  ],
+                ),
+                Gap(10),
+                MyText(
+                  'El ruido blanco y la música de baja frecuencia calman la actividad cerebral, reduciendo el tiempo necesario para quedarse dormido.',
+                  fontSize: 13.5,
+                  color: Constants.kTextSecondaryColor,
+                ),
+              ],
             ),
           ),
-          const Gap(20),
-          Center(
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: musicData.map((item) {
-                return InkWell(
-                  onTap: () => _launchURL(item.link),
-                  child: Container(
-                    width: 180,
-                    height: 280,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color(0xFFCED4DA), width: 1),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          const Gap(16),
+
+          // Tarjeta de Temporizador de Relajación Nocturna (Sleep Timer)
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Constants.kSurfaceColor,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: _remainingSeconds > 0
+                    ? Constants.kMintColor.withValues(alpha: 0.5)
+                    : Constants.kBorderColor,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                          child: Image.network(
-                            item.imageUrl,
-                            width: double.infinity,
-                            height: 180,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/icon/icon.png',
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          ),
+                        Icon(
+                          Icons.timer_outlined,
+                          color: _remainingSeconds > 0 ? Constants.kMintColor : Constants.kSecondaryColor,
+                          size: 22,
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        const Gap(8),
+                        const MyText(
+                          'Temporizador de Desconexión',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Constants.kTextColor,
+                        ),
+                      ],
+                    ),
+                    if (_remainingSeconds > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Constants.kMintColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: MyText(
+                          _formatCountdown(_remainingSeconds),
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Constants.kMintColor,
+                        ),
+                      ),
+                  ],
+                ),
+                const Gap(6),
+                const MyText(
+                  'Programa cuánto tiempo dedicarás a escuchar música o leer antes de cerrar los ojos:',
+                  fontSize: 12.5,
+                  color: Constants.kTextSecondaryColor,
+                ),
+                const Gap(12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [15, 30, 45, 60].map((min) {
+                    final isSelected = _selectedMinutes == min && _remainingSeconds > 0;
+                    return ChoiceChip(
+                      label: MyText(
+                        '$min min',
+                        fontSize: 12.5,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        color: isSelected ? Constants.kBackgroundColor : Constants.kTextColor,
+                      ),
+                      selected: isSelected,
+                      selectedColor: Constants.kMintColor,
+                      backgroundColor: Constants.kBackgroundColor,
+                      side: BorderSide(
+                        color: isSelected ? Constants.kMintColor : Constants.kBorderColor,
+                      ),
+                      onSelected: (_) => _startTimer(isSelected ? 0 : min),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          const Gap(22),
+
+          const Padding(
+            padding: EdgeInsets.only(left: 4),
+            child: MyText(
+              'Playlists recomendadas en Spotify',
+              fontSize: 16.5,
+              fontWeight: FontWeight.bold,
+              color: Constants.kTextColor,
+            ),
+          ),
+          const Gap(14),
+
+          // Grid moderno de tarjetas musicales
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 14,
+              childAspectRatio: 0.72,
+            ),
+            itemCount: musicData.length,
+            itemBuilder: (context, index) {
+              final item = musicData[index];
+              return InkWell(
+                onTap: () => _launchURL(item.link),
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Constants.kSurfaceColor,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: Constants.kBorderColor),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(17)),
+                          child: Stack(
+                            fit: StackFit.expand,
                             children: [
-                              Text(
-                                item.title,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF212529),
-                                ),
+                              Image.network(
+                                item.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Constants.kSurfaceLightColor,
+                                    child: const Center(
+                                      child: Icon(Icons.music_note_rounded, color: Constants.kSecondaryColor, size: 36),
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(height: 5),
-                              Text(
-                                item.description,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF6C757D),
+                              Positioned(
+                                right: 8,
+                                bottom: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.7),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Constants.kMintColor,
+                                    size: 18,
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            MyText(
+                              item.title,
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.bold,
+                              color: Constants.kTextColor,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const Gap(4),
+                            MyText(
+                              item.description,
+                              fontSize: 11.5,
+                              color: Constants.kTextSecondaryColor,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            },
           ),
-          const Gap(20),
-          // GridView.builder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //     crossAxisCount: 2,
-          //     childAspectRatio: 0.8,
-          //   ),
-          //   itemCount: musicData.length,
-          //   itemBuilder: (context, index) {
-          //     final item = musicData[index];
-          //     return Card(
-          //       margin: EdgeInsets.all(10),
-          //       elevation: 0,
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(10),
-          //         side: BorderSide(color: Color(0xFFCED4DA), width: 1),
-          //       ),
-          //       child: InkWell(
-          //         onTap: () => _launchURL(item.link),
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             Flexible(
-          //               flex: 75,
-          //               child: ClipRRect(
-          //                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-          //                 child: Container(
-          //                   width: double.infinity,
-          //                   color: Constants.kBackgroundColor,
-          //                   child: Image.network(
-          //                     item.imageUrl,
-          //                     fit: BoxFit.cover,
-          //                     errorBuilder: (context, error, stackTrace) {
-          //                       return Image.asset(
-          //                         'assets/icon/icon.png',
-          //                         fit: BoxFit.cover,
-          //                       );
-          //                     },
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             Flexible(
-          //               flex: 25,
-          //               child: Padding(
-          //                 padding: EdgeInsets.all(10),
-          //                 child: Column(
-          //                   crossAxisAlignment: CrossAxisAlignment.start,
-          //                   children: [
-          //                     Text(
-          //                       item.title,
-          //                       style: TextStyle(
-          //                         fontSize: 20,
-          //                         fontWeight: FontWeight.bold,
-          //                         color: Color(0xFF212529),
-          //                       ),
-          //                     ),
-          //                     SizedBox(height: 5),
-          //                     Text(
-          //                       item.description,
-          //                       style: TextStyle(
-          //                         fontSize: 15,
-          //                         color: Color(0xFF6C757D),
-          //                       ),
-          //                       overflow: TextOverflow.ellipsis,
-          //                     ),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
+          const Gap(24),
         ],
       ),
     );

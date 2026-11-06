@@ -15,6 +15,7 @@ class ControlDreamsController {
   }
 
   static Future<List<SleepSchedule>> getSleepSchedules() async {
+    if (UserPreferences.id == null) return [];
     final ResponseModel resp = await DioController.petition(HTTPMethods.get, 'sleep-schedules/last-week/${UserPreferences.id}', showLoading: false);
 
     if (resp.status == 200) {

@@ -30,53 +30,59 @@ class MyTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      style: const TextStyle(
+        color: Constants.kTextColor,
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Constants.kSecondaryColor,
+        fillColor: Constants.kSurfaceColor,
         labelText: text,
         labelStyle: const TextStyle(
-          color: Constants.kBackgroundColor,
+          color: Constants.kTextSecondaryColor,
+          fontSize: 14,
         ),
         floatingLabelStyle: const TextStyle(
-          color: Constants.kBackgroundColor,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
+          color: Constants.kSecondaryColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
         ),
-        hoverColor: Constants.kSecondaryColor.withValues(alpha: 0.05),
-        prefixIconColor: Constants.kPrimaryColor,
-        suffixIconColor: Constants.kPrimaryColor,
+        prefixIconColor: Constants.kSecondaryColor,
+        suffixIconColor: Constants.kTextSecondaryColor,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
-            color: Constants.kPrimaryColor,
+            color: Constants.kBorderColor,
+            width: 1.2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
             color: Constants.kPrimaryColor,
-            width: 3,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Constants.kErrorColor, // Borde cuando hay un error
             width: 2.0,
           ),
         ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
-            color: Constants.kErrorColor, // Borde cuando hay un error y el campo está enfocado
+            color: Constants.kErrorColor,
+            width: 1.5,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Constants.kErrorColor,
             width: 2.0,
           ),
         ),
       ),
       cursorErrorColor: Constants.kErrorColor,
-      cursorColor: Constants.kPrimaryColor,
+      cursorColor: Constants.kSecondaryColor,
       validator: validator,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
@@ -114,54 +120,54 @@ class MyTextField2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      style: const TextStyle(
+        color: Constants.kTextColor,
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
-        // filled: true,
-        fillColor: Constants.kSecondaryColor,
-        // labelText: text,
-        labelStyle: const TextStyle(
-          color: Constants.kBackgroundColor,
-        ),
-        // floatingLabelStyle: const TextStyle(
-        //   color: Constants.kBackgroundColor,
-        //   fontWeight: FontWeight.bold,
-        //   fontSize: 18,
-        // ),
+        filled: true,
+        fillColor: Constants.kSurfaceColor,
         hintText: text,
-        hoverColor: Constants.kSecondaryColor.withValues(alpha: 0.05),
-        prefixIconColor: Constants.kPrimaryColor,
-        suffixIconColor: Constants.kPrimaryColor,
+        hintStyle: const TextStyle(
+          color: Constants.kTextSecondaryColor,
+          fontSize: 14,
+        ),
+        prefixIconColor: Constants.kSecondaryColor,
+        suffixIconColor: Constants.kTextSecondaryColor,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
-            color: Constants.kPrimaryColor,
+            color: Constants.kBorderColor,
+            width: 1.2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
             color: Constants.kPrimaryColor,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Constants.kErrorColor, // Borde cuando hay un error
             width: 2.0,
           ),
         ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
-            color: Constants.kErrorColor, // Borde cuando hay un error y el campo está enfocado
+            color: Constants.kErrorColor,
+            width: 1.5,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Constants.kErrorColor,
             width: 2.0,
           ),
         ),
       ),
       cursorErrorColor: Constants.kErrorColor,
-      cursorColor: Constants.kPrimaryColor,
+      cursorColor: Constants.kSecondaryColor,
       validator: validator,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,

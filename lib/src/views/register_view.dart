@@ -16,64 +16,87 @@ class RegisterView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Constants.kBackgroundColor,
-      body: Form(
-        key: userProvider.formKeyRegister,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: 128,
-                  height: 128,
-                  decoration: const BoxDecoration(
-                    color: Constants.kBackgroundColor,
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/icon.png'),
-                      fit: BoxFit.fitHeight,
-                    ),
-                    // borderRadius: BorderRadius.only(
-                    //   bottomLeft: Radius.circular(5),
-                    //   bottomRight: Radius.circular(5),
-                    // ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                  decoration: BoxDecoration(
-                    color: Constants.kSecondaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        const MyText(
-                          'Regístrate para continuar',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          textAlign: TextAlign.center,
-                          color: Constants.kPrimaryColor,
+      body: SafeArea(
+        child: Form(
+          key: userProvider.formKeyRegister,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Logo
+                  Container(
+                    width: 90,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Constants.kPrimaryColor.withValues(alpha: 0.3),
+                          blurRadius: 25,
+                          spreadRadius: 4,
                         ),
-                        const Gap(30),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/icon.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const Gap(16),
+                  const MyText(
+                    'Crear Cuenta',
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Constants.kTextColor,
+                  ),
+                  const Gap(6),
+                  const MyText(
+                    'Únete a Sleepfy y comienza a transformar tu descanso',
+                    fontSize: 13.5,
+                    color: Constants.kTextSecondaryColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  const Gap(24),
+
+                  // Form Card
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Constants.kSurfaceColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Constants.kBorderColor, width: 1.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                         const NameFieldItem(),
-                        const Gap(20),
+                        const Gap(16),
                         const LastNameFieldItem(),
-                        const Gap(20),
+                        const Gap(16),
                         const EmailFieldItem(),
-                        const Gap(20),
+                        const Gap(16),
                         PasswordFieldItem(userProvider: userProvider),
-                        const Gap(40),
+                        const Gap(28),
                         RegisterButton(userProvider: userProvider),
-                        const Gap(10),
+                        const Gap(12),
                         ToBackButton(userProvider: userProvider),
-                        // _ForgotPassword(userProvider: userProvider),
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -81,30 +104,6 @@ class RegisterView extends StatelessWidget {
     );
   }
 }
-
-// class _HeaderLogin extends StatelessWidget {
-//   const _HeaderLogin();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // Imagen de la cabecera
-//     return Container(
-//       width: double.infinity,
-//       height: double.infinity,
-//       decoration: const BoxDecoration(
-//         color: Constants.kBackgroundColor,
-//         image: DecorationImage(
-//           image: AssetImage('assets/images/icon.png'),
-//           fit: BoxFit.fitHeight,
-//         ),
-//         // borderRadius: BorderRadius.only(
-//         //   bottomLeft: Radius.circular(5),
-//         //   bottomRight: Radius.circular(5),
-//         // ),
-//       ),
-//     );
-//   }
-// }
 
 class NameFieldItem extends StatelessWidget {
   const NameFieldItem({
@@ -119,7 +118,7 @@ class NameFieldItem extends StatelessWidget {
       controller: userProvider.nameController,
       text: 'Nombre',
       keyboardType: TextInputType.text,
-      prefixIcon: const Icon(Icons.person),
+      prefixIcon: const Icon(Icons.person_outline_rounded),
       validator: (value) => Validations.validateName(value),
     );
   }
@@ -138,7 +137,7 @@ class LastNameFieldItem extends StatelessWidget {
       controller: userProvider.lastNameController,
       text: 'Apellido',
       keyboardType: TextInputType.text,
-      prefixIcon: const Icon(Icons.person_4),
+      prefixIcon: const Icon(Icons.badge_outlined),
       validator: (value) => Validations.validateLastName(value),
     );
   }
@@ -157,7 +156,7 @@ class EmailFieldItem extends StatelessWidget {
       controller: userProvider.emailController,
       text: 'Correo electrónico',
       keyboardType: TextInputType.emailAddress,
-      prefixIcon: const Icon(Icons.email),
+      prefixIcon: const Icon(Icons.email_outlined),
       validator: (value) => Validations.validateEmail(value),
     );
   }
@@ -177,7 +176,7 @@ class PasswordFieldItem extends StatelessWidget {
       controller: userProvider.passwordController,
       text: 'Contraseña',
       keyboardType: TextInputType.visiblePassword,
-      prefixIcon: const Icon(Icons.lock),
+      prefixIcon: const Icon(Icons.lock_outline_rounded),
       validator: (value) => Validations.validatePassword(value),
     );
   }
@@ -194,13 +193,18 @@ class RegisterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyButton(
-      text: 'Registrarse',
+      color: Constants.kPrimaryColor,
+      text: 'Crear cuenta',
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.person_add),
+          Icon(Icons.person_add_rounded, size: 20, color: Colors.white),
           Gap(10),
-          MyText('Registrarse'),
+          MyText(
+            'Crear cuenta',
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ],
       ),
       onPressed: () {
@@ -221,14 +225,19 @@ class ToBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyButton(
-      color: Constants.kPrimaryColor.withValues(alpha: 0.7),
-      text: 'Volver',
+      color: Constants.kSurfaceLightColor,
+      text: 'Ya tengo cuenta, iniciar sesión',
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.arrow_back),
-          Gap(10),
-          MyText('Volver'),
+          Icon(Icons.arrow_back_rounded, size: 18, color: Constants.kSecondaryColor),
+          Gap(8),
+          MyText(
+            'Ya tengo cuenta, iniciar sesión',
+            color: Constants.kTextColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ],
       ),
       onPressed: () {

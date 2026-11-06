@@ -11,61 +11,85 @@ class AboutView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.kBackgroundColor,
       appBar: AppBar(
-        title: const MyTitleAppBar(title: 'Acerca de'),
+        title: const MyTitleAppBar(title: 'Acerca de Sleepfy'),
       ),
-      body: const SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Sleepfy es una aplicación que te ayuda a dormir mejor. '
-                'Con Sleepfy, puedes disfrutar de varias herramientas de relajación, '
-                'meditación y sonidos de la naturaleza para ayudarte a dormir. ',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.justify,
-              ),
-              Gap(20),
-              Text(
-                'Sleepfy fue desarrollado por Francisco Sotelo, '
-                'Si tienes alguna pregunta o sugerencia, no dudes en '
-                'contactarnos en:',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.justify,
-              ),
-              Gap(40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SocialNetworkItem(
-                      image: 'assets/images/linkedin.png',
-                      url: 'https://www.linkedin.com/in/francisco-rafael-sotelo-delgado-4ba8a0254/',
-                      text: 'Francisco Sotelo'),
-                  // SizedBox(width: 50),
-                  // SocialNetworkItem(
-                  //   image: 'assets/images/instagram.png',
-                  //   url: 'https://www.instagram.com/_sleepfy/',
-                  //   text: 'Sleepfy',
-                  // ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: <Widget>[
+            // Logo
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Constants.kPrimaryColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                  ),
                 ],
               ),
-              Gap(40),
-              MyText(
-                'Versión ${Constants.appVersion}',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/icon.png',
+                  fit: BoxFit.cover,
+                ),
               ),
-              // Gap(20),
-              // Text(
-              //   '© 2024',
-              //   style: TextStyle(fontSize: 16),
-              // ),
-              // Gap(20),
-            ],
-          ),
+            ),
+            const Gap(14),
+            const MyText(
+              'Sleepfy',
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Constants.kTextColor,
+            ),
+            const Gap(4),
+            const MyText(
+              'Versión ${Constants.appVersion}',
+              fontSize: 13,
+              color: Constants.kTextSecondaryColor,
+            ),
+            const Gap(24),
+
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Constants.kSurfaceColor,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Constants.kBorderColor),
+              ),
+              child: const Column(
+                children: [
+                  MyText(
+                    'Sleepfy es una plataforma diseñada para mejorar la calidad de vida y el bienestar a través del sueño reparador. Combina herramientas de relajación, higiene del sueño y análisis personalizado potenciado por Inteligencia Artificial.',
+                    fontSize: 14.5,
+                    color: Constants.kTextColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  Gap(16),
+                  Divider(color: Constants.kBorderColor),
+                  Gap(12),
+                  MyText(
+                    'Desarrollado con dedicación por Francisco Sotelo.',
+                    fontSize: 13.5,
+                    color: Constants.kTextSecondaryColor,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const Gap(30),
+
+            const SocialNetworkItem(
+              image: 'assets/images/linkedin.png',
+              url: 'https://www.linkedin.com/in/francisco-rafael-sotelo-delgado-4ba8a0254/',
+              text: 'Conectar en LinkedIn',
+            ),
+            const Gap(30),
+          ],
         ),
       ),
     );
@@ -81,26 +105,35 @@ class SocialNetworkItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => launchUrl(Uri.parse(url)),
-      child: Column(
-        children: [
-          Image.asset(
-            image,
-            width: 30,
-            height: 30,
-          ),
-          if (text != null)
-            SizedBox(
-              width: 80,
-              child: MyText(
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: Constants.kSurfaceColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Constants.kBorderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              image,
+              width: 24,
+              height: 24,
+            ),
+            if (text != null) ...[
+              const Gap(12),
+              MyText(
                 text!,
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
-                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w600,
+                color: Constants.kSecondaryColor,
               ),
-            ),
-        ],
+            ],
+          ],
+        ),
       ),
     );
   }

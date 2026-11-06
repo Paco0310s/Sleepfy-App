@@ -25,17 +25,26 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: padding,
-          backgroundColor: color,
-          maximumSize: Size(width ?? double.infinity, height ?? 50),
-          minimumSize: Size(width ?? double.infinity, height ?? 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          foregroundColor: Constants.kSecondaryColor,
+      style: ElevatedButton.styleFrom(
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        backgroundColor: color,
+        elevation: 3,
+        shadowColor: color.withValues(alpha: 0.35),
+        maximumSize: Size(width ?? double.infinity, height ?? 52),
+        minimumSize: Size(width ?? double.infinity, height ?? 52),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
         ),
-        onPressed: onPressed,
-        child: child ?? MyText(text, fontSize: 16, fontWeight: FontWeight.bold));
+        foregroundColor: Colors.white,
+      ),
+      onPressed: onPressed,
+      child: child ??
+          MyText(
+            text,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+    );
   }
 }

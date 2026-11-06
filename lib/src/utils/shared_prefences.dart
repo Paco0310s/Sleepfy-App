@@ -61,4 +61,59 @@ class UserPreferences {
   static Future<void> removeEmail() async {
     await _preferences.remove('email');
   }
+
+  // Cached AI Routine
+  static Future<void> setRoutine(String routine) async {
+    await _preferences.setString('cached_routine', routine);
+    await _preferences.setString('cached_routine_date', DateTime.now().toIso8601String());
+  }
+
+  static String? get routine => _preferences.getString('cached_routine');
+  static String? get routineDate => _preferences.getString('cached_routine_date');
+
+  static Future<void> removeRoutine() async {
+    await _preferences.remove('cached_routine');
+    await _preferences.remove('cached_routine_date');
+  }
+
+  // Cerrar sesión completa y limpiar almacenamiento local
+  static Future<void> logout() async {
+    await _preferences.remove('token');
+    await _preferences.remove('id');
+    await _preferences.remove('name');
+    await _preferences.remove('lastname');
+    await _preferences.remove('email');
+    await _preferences.remove('cached_routine');
+    await _preferences.remove('cached_routine_date');
+  }
+
+  // Desafíos de sueño completados
+  static List<String> get completedChallenges => _preferences.getStringList('completed_challenges') ?? [];
+
+  static Future<void> toggleChallenge(String title) async {
+    final list = List<String>.from(completedChallenges);
+    if (list.contains(title)) {
+      list.remove(title);
+    } else {
+      list.add(title);
+    }
+    await _preferences.setStringList('completed_challenges', list);
+  }
+
+  // Check-in matutino de energía
+  static String? get morningMood => _preferences.getString('morning_mood');
+  static String? get morningMoodDate => _preferences.getString('morning_mood_date');
+
+  static Future<void> setMorningMood(String mood) async {
+    final now = DateTime.now();
+    final todayStr = '${now.year}-${now.month}-${now.day}';
+    await _preferences.setString('morning_mood', mood);
+    await _preferences.setString('morning_mood_date', todayStr);
+  }
+
+  static bool get hasCheckedInToday {
+    final now = DateTime.now();
+    final todayStr = '${now.year}-${now.month}-${now.day}';
+    return morningMoodDate == todayStr && morningMood != null;
+  }
 }

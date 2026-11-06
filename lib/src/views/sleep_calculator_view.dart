@@ -49,13 +49,12 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
       wakeDateTime = wakeDateTime.add(const Duration(days: 1));
     }
 
-    // Un ciclo = 90 min. Tiempo promedio en conciliar = 14 min.
     return [
       {
         'cycles': 6,
         'hours': '9 hrs',
         'badge': 'ÓPTIMO',
-        'badgeColor': Constants.kMintColor,
+        'badgeColor': Constants.kSageGreen,
         'time': _formatDateTime(wakeDateTime.subtract(const Duration(minutes: (6 * 90) + 14))),
         'desc': 'Descanso profundo y reparación celular completa.',
       },
@@ -63,7 +62,7 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
         'cycles': 5,
         'hours': '7.5 hrs',
         'badge': 'RECOMENDADO',
-        'badgeColor': Constants.kSecondaryColor,
+        'badgeColor': Constants.kSageGreen,
         'time': _formatDateTime(wakeDateTime.subtract(const Duration(minutes: (5 * 90) + 14))),
         'desc': 'Ideal para la mayoría de adultos activos.',
       },
@@ -71,7 +70,7 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
         'cycles': 4,
         'hours': '6 hrs',
         'badge': 'ACEPTABLE',
-        'badgeColor': Constants.kWarningColor,
+        'badgeColor': const Color(0xFFD49E3D),
         'time': _formatDateTime(wakeDateTime.subtract(const Duration(minutes: (4 * 90) + 14))),
         'desc': 'Suficiente para días ocupados sin fatiga severa.',
       },
@@ -79,7 +78,7 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
         'cycles': 3,
         'hours': '4.5 hrs',
         'badge': 'MÍNIMO',
-        'badgeColor': Constants.kErrorColor,
+        'badgeColor': Constants.kSoftRose,
         'time': _formatDateTime(wakeDateTime.subtract(const Duration(minutes: (3 * 90) + 14))),
         'desc': 'Solo en casos excepcionales o siestas largas.',
       },
@@ -87,14 +86,14 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
   }
 
   List<Map<String, dynamic>> _calculateWakeTimesFromNow() {
-    final now = DateTime.now().add(const Duration(minutes: 14)); // 14 min para conciliar
+    final now = DateTime.now().add(const Duration(minutes: 14));
 
     return [
       {
         'cycles': 6,
         'hours': '9 hrs',
         'badge': 'ÓPTIMO',
-        'badgeColor': Constants.kMintColor,
+        'badgeColor': Constants.kSageGreen,
         'time': _formatDateTime(now.add(const Duration(minutes: 6 * 90))),
         'desc': 'Te despertarás al final de tu 6to ciclo REM.',
       },
@@ -102,15 +101,15 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
         'cycles': 5,
         'hours': '7.5 hrs',
         'badge': 'RECOMENDADO',
-        'badgeColor': Constants.kSecondaryColor,
+        'badgeColor': Constants.kSageGreen,
         'time': _formatDateTime(now.add(const Duration(minutes: 5 * 90))),
-        'desc': 'Balance perfecto entre descanso y productividad.',
+        'desc': 'Balance ideal entre descanso y productividad.',
       },
       {
         'cycles': 4,
         'hours': '6 hrs',
         'badge': 'ACEPTABLE',
-        'badgeColor': Constants.kWarningColor,
+        'badgeColor': const Color(0xFFD49E3D),
         'time': _formatDateTime(now.add(const Duration(minutes: 4 * 90))),
         'desc': 'Despertarás ligero sin interrumpir el ciclo profundo.',
       },
@@ -118,7 +117,7 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
         'cycles': 3,
         'hours': '4.5 hrs',
         'badge': 'MÍNIMO',
-        'badgeColor': Constants.kErrorColor,
+        'badgeColor': Constants.kSoftRose,
         'time': _formatDateTime(now.add(const Duration(minutes: 3 * 90))),
         'desc': 'Descanso básico para emergencias.',
       },
@@ -128,14 +127,14 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Calculadora de Sueño'),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Constants.kSecondaryColor,
-          labelColor: Constants.kSecondaryColor,
-          unselectedLabelColor: Constants.kTextSecondaryColor,
+          indicatorColor: Constants.accent(context),
+          labelColor: Constants.textPrimary(context),
+          unselectedLabelColor: Constants.textSecondary(context),
           tabs: const [
             Tab(text: 'Hora de Despertar'),
             Tab(text: 'Dormir Ahora'),
@@ -160,18 +159,18 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
       children: [
         // Selector de hora de despertar
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Constants.kSurfaceColor,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Constants.kBorderColor),
+            color: Constants.surface(context),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Constants.border(context)),
           ),
           child: Column(
             children: [
-              const MyText(
+              MyText(
                 '¿A qué hora quieres despertar?',
-                fontSize: 14,
-                color: Constants.kTextSecondaryColor,
+                fontSize: 13.5,
+                color: Constants.textSecondary(context),
               ),
               const Gap(10),
               GestureDetector(
@@ -179,65 +178,54 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
                   final picked = await showTimePicker(
                     context: context,
                     initialTime: _targetWakeTime,
-                    builder: (context, child) {
-                      return Theme(
-                        data: ThemeData.dark().copyWith(
-                          colorScheme: const ColorScheme.dark(
-                            primary: Constants.kSecondaryColor,
-                            surface: Constants.kSurfaceColor,
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
                   );
                   if (picked != null) {
                     setState(() => _targetWakeTime = picked);
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 11),
                   decoration: BoxDecoration(
-                    color: Constants.kSurfaceLightColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Constants.kSecondaryColor.withValues(alpha: 0.5)),
+                    color: Constants.surfaceLight(context),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Constants.border(context)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.alarm_rounded, color: Constants.kSecondaryColor, size: 28),
+                      Icon(Icons.alarm_rounded, color: Constants.accent(context), size: 24),
                       const Gap(12),
                       MyText(
                         _formatTimeOfDay(_targetWakeTime),
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Constants.kTextColor,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Constants.textPrimary(context),
                       ),
                       const Gap(8),
-                      const Icon(Icons.edit_rounded, color: Constants.kTextSecondaryColor, size: 18),
+                      Icon(Icons.edit_rounded, color: Constants.textSecondary(context), size: 16),
                     ],
                   ),
                 ),
               ),
-              const Gap(12),
-              const MyText(
-                'Calculamos los ciclos de 90 min + 14 min para quedarte dormido.',
-                fontSize: 12,
-                color: Constants.kTextSecondaryColor,
+              const Gap(10),
+              MyText(
+                'Calculamos ciclos de 90 min + 14 min para quedarte dormido.',
+                fontSize: 11.5,
+                color: Constants.textSecondary(context),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-        const Gap(20),
+        const Gap(18),
 
-        const Padding(
-          padding: EdgeInsets.only(left: 6, bottom: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: MyText(
             'DEBERÍAS ACOSTARTE A ALGUNA DE ESTAS HORAS:',
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextSecondaryColor,
+            fontSize: 11.5,
+            fontWeight: FontWeight.w600,
+            color: Constants.textSecondary(context),
           ),
         ),
 
@@ -253,42 +241,38 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.4)),
+            color: Constants.surface(context),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Constants.border(context)),
           ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Constants.kPrimaryColor.withValues(alpha: 0.2),
+                  color: Constants.surfaceLight(context),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.nightlight_round, color: Constants.kSecondaryColor, size: 30),
+                child: Icon(Icons.bedtime_outlined, color: Constants.accent(context), size: 24),
               ),
               const Gap(14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MyText(
                       'Si te duermes en este momento...',
-                      color: Constants.kTextColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      color: Constants.textPrimary(context),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                     ),
-                    Gap(4),
+                    const Gap(2),
                     MyText(
                       'Programa tu alarma a una de estas horas para despertar sin pesadez.',
-                      color: Constants.kTextSecondaryColor,
-                      fontSize: 12.5,
+                      color: Constants.textSecondary(context),
+                      fontSize: 12,
                     ),
                   ],
                 ),
@@ -296,15 +280,15 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
             ],
           ),
         ),
-        const Gap(20),
+        const Gap(18),
 
-        const Padding(
-          padding: EdgeInsets.only(left: 6, bottom: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: MyText(
             'HORAS RECOMENDADAS PARA DESPERTAR:',
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextSecondaryColor,
+            fontSize: 11.5,
+            fontWeight: FontWeight.w600,
+            color: Constants.textSecondary(context),
           ),
         ),
 
@@ -317,19 +301,12 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
     final Color badgeColor = item['badgeColor'];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Constants.kSurfaceColor,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Constants.kBorderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Constants.surface(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Constants.border(context)),
       ),
       child: Row(
         children: [
@@ -340,49 +317,48 @@ class _SleepCalculatorViewState extends State<SleepCalculatorView> with SingleTi
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
-                        color: badgeColor.withValues(alpha: 0.15),
+                        color: badgeColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: badgeColor.withValues(alpha: 0.4)),
                       ),
                       child: MyText(
                         item['badge'],
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
                         color: badgeColor,
                       ),
                     ),
                     const Gap(8),
                     MyText(
                       '${item['cycles']} ciclos (${item['hours']})',
-                      fontSize: 12.5,
-                      color: Constants.kTextSecondaryColor,
+                      fontSize: 12,
+                      color: Constants.textSecondary(context),
                     ),
                   ],
                 ),
-                const Gap(8),
+                const Gap(6),
                 MyText(
                   item['desc'],
                   fontSize: 12,
-                  color: Constants.kTextSecondaryColor,
+                  color: Constants.textSecondary(context),
                 ),
               ],
             ),
           ),
           const Gap(12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
             decoration: BoxDecoration(
-              color: Constants.kSurfaceLightColor,
+              color: Constants.surfaceLight(context),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
+              border: Border.all(color: Constants.border(context)),
             ),
             child: MyText(
               item['time'],
-              fontSize: 19,
-              fontWeight: FontWeight.bold,
-              color: Constants.kTextColor,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
             ),
           ),
         ],

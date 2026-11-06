@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:sleepfy/src/providers/control_dreams_provider.dart';
-import 'package:sleepfy/src/providers/test_provider.dart';
 import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/utils/shared_prefences.dart';
 import 'package:sleepfy/src/views/login_view.dart';
@@ -22,7 +19,7 @@ class InformationSesionView extends StatelessWidget {
     final email = UserPreferences.email;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Perfil y Sesión'),
       ),
@@ -33,99 +30,122 @@ class InformationSesionView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Gap(10),
-              // Avatar estilizado
+              // Avatar minimalista
               Container(
-                padding: const EdgeInsets.all(22),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Constants.kSurfaceColor,
-                  border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.5), width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Constants.kPrimaryColor.withValues(alpha: 0.25),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  color: Constants.surface(context),
+                  border: Border.all(color: Constants.border(context), width: 1.5),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person_rounded,
-                  size: 64,
-                  color: Constants.kSecondaryColor,
+                  size: 56,
+                  color: Constants.accent(context),
                 ),
               ),
-              const Gap(20),
+              const Gap(16),
               MyText(
                 fullName,
-                color: Constants.kTextColor,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+                color: Constants.textPrimary(context),
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
               ),
-              const Gap(6),
+              const Gap(4),
               MyText(
                 email ?? 'Sin correo electrónico',
-                color: Constants.kTextSecondaryColor,
-                fontSize: 14,
+                color: Constants.textSecondary(context),
+                fontSize: 13.5,
               ),
-              const Gap(32),
+              const Gap(28),
 
               // Tarjeta informativa
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Constants.kSurfaceColor,
+                  color: Constants.surface(context),
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Constants.kBorderColor),
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: Column(
                   children: [
                     _buildProfileItem(
+                      context,
                       icon: Icons.person_outline_rounded,
                       label: 'Nombre completo',
                       value: fullName,
                     ),
-                    const Divider(height: 24, color: Constants.kBorderColor),
+                    Divider(height: 24, color: Constants.border(context)),
                     _buildProfileItem(
+                      context,
                       icon: Icons.mail_outline_rounded,
                       label: 'Correo de acceso',
                       value: email ?? '-',
                     ),
-                    const Divider(height: 24, color: Constants.kBorderColor),
+                    Divider(height: 24, color: Constants.border(context)),
                     _buildProfileItem(
+                      context,
                       icon: Icons.verified_user_outlined,
                       label: 'Estado de la cuenta',
-                      value: 'Activa y sincronizada',
-                      valueColor: Constants.kMintColor,
+                      value: 'Activa y verificada',
+                      valueColor: Constants.kSageGreen,
                     ),
                   ],
                 ),
               ),
-              const Gap(40),
+              const Gap(28),
 
-              // Botón cerrar sesión
+              // Cerrar sesión
               MyButton(
-                color: Constants.kErrorColor.withValues(alpha: 0.85),
-                text: 'Cerrar Sesión',
-                child: const Row(
+                outlined: true,
+                text: 'Cerrar sesión',
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.logout_rounded, color: Colors.white, size: 20),
-                    Gap(8),
-                    MyText(
-                      'Cerrar Sesión',
-                      color: Colors.white,
+                    Icon(Icons.logout_rounded, color: Constants.kSoftRose, size: 19),
+                    const Gap(8),
+                    const MyText(
+                      'Cerrar sesión',
+                      color: Constants.kSoftRose,
                       fontWeight: FontWeight.w600,
+                      fontSize: 14.5,
                     ),
                   ],
                 ),
-                onPressed: () async {
-                  await UserPreferences.logout();
-                  if (context.mounted) {
-                    Provider.of<TestProvider>(context, listen: false).reset();
-                    Provider.of<ControlDreamsProvider>(context, listen: false).reset();
-                  }
-                  Get.offAll(() => const LoginView());
+                onPressed: () {
+                  showAdaptiveDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: Constants.surface(context),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          side: BorderSide(color: Constants.border(context)),
+                        ),
+                        title: const MyTitleAppBar(title: '¿Cerrar sesión?'),
+                        content: MyText(
+                          'Tendrás que volver a ingresar tus credenciales para acceder a tus rutinas y estadísticas.',
+                          color: Constants.textSecondary(context),
+                          fontSize: 13.5,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: MyText('Cancelar', color: Constants.textSecondary(context)),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await UserPreferences.logout();
+                              Get.offAll(() => const LoginView());
+                            },
+                            child: const MyText('Cerrar sesión', color: Constants.kSoftRose, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ],
@@ -135,7 +155,8 @@ class InformationSesionView extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileItem({
+  Widget _buildProfileItem(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required String value,
@@ -143,24 +164,26 @@ class InformationSesionView extends StatelessWidget {
   }) {
     return Row(
       children: [
-        Icon(icon, color: Constants.kSecondaryColor, size: 20),
-        const Gap(12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MyText(
-              label,
-              fontSize: 12,
-              color: Constants.kTextSecondaryColor,
-            ),
-            const Gap(2),
-            MyText(
-              value,
-              fontSize: 14.5,
-              fontWeight: FontWeight.w600,
-              color: valueColor ?? Constants.kTextColor,
-            ),
-          ],
+        Icon(icon, color: Constants.textSecondary(context), size: 20),
+        const Gap(14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MyText(
+                label,
+                fontSize: 11.5,
+                color: Constants.textSecondary(context),
+              ),
+              const Gap(2),
+              MyText(
+                value,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: valueColor ?? Constants.textPrimary(context),
+              ),
+            ],
+          ),
         ),
       ],
     );

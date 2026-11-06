@@ -64,7 +64,7 @@ class MeditationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Meditación y Respiración'),
       ),
@@ -75,54 +75,50 @@ class MeditationsView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF064E3B), Color(0xFF1E293B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Constants.surface(context),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Constants.kMintColor.withValues(alpha: 0.4)),
+              border: Border.all(color: Constants.border(context)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Constants.kMintColor.withValues(alpha: 0.2),
+                    color: Constants.surfaceLight(context),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.air_rounded, color: Constants.kMintColor, size: 28),
+                  child: const Icon(Icons.air_rounded, color: Constants.kSageGreen, size: 26),
                 ),
                 const Gap(14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MyText(
+                      MyText(
                         'Respiración 4-7-8 Interactiva',
                         fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Constants.kTextColor,
+                        fontWeight: FontWeight.w600,
+                        color: Constants.textPrimary(context),
                       ),
                       const Gap(2),
-                      const MyText(
+                      MyText(
                         'Orbe visual animado con contador y pulsos para calmar el ritmo cardíaco.',
                         fontSize: 12,
-                        color: Constants.kTextSecondaryColor,
+                        color: Constants.textSecondary(context),
                       ),
                       const Gap(10),
                       GestureDetector(
                         onTap: () => Get.to(() => const BreathingExerciseView()),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            MyText(
+                            const MyText(
                               'Iniciar ejercicio ahora',
-                              color: Constants.kMintColor,
+                              color: Constants.kSageGreen,
                               fontSize: 12.5,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                             ),
-                            Gap(4),
-                            Icon(Icons.arrow_forward_rounded, color: Constants.kMintColor, size: 16),
+                            const Gap(4),
+                            const Icon(Icons.arrow_forward_rounded, color: Constants.kSageGreen, size: 15),
                           ],
                         ),
                       ),
@@ -134,50 +130,46 @@ class MeditationsView extends StatelessWidget {
           ),
           const Gap(20),
 
-          const MyText(
-            'Ejercicios de Respiración Guiada',
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextColor,
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: MyText(
+              'Ejercicios de Respiración Guiada',
+              fontSize: 15.5,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
+            ),
           ),
           const Gap(10),
 
           // Lista de meditaciones
           ...meditations.map((meditation) => Container(
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color: Constants.kSurfaceColor,
+                  color: Constants.surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Constants.kBorderColor, width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+                      color: Constants.surfaceLight(context),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.air_rounded,
-                      color: Constants.kSecondaryColor,
-                      size: 22,
+                      color: Constants.accent(context),
+                      size: 20,
                     ),
                   ),
                   title: MyText(
                     meditation["title"]!,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Constants.kTextColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.5,
+                    color: Constants.textPrimary(context),
                   ),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: Constants.kSecondaryColor),
+                  trailing: Icon(Icons.chevron_right_rounded, color: Constants.textSecondary(context), size: 20),
                   onTap: () {
                     Get.to(() => MeditationDetailScreen(
                           title: meditation["title"]!,
@@ -187,86 +179,86 @@ class MeditationsView extends StatelessWidget {
                 ),
               )),
 
-          const Gap(24),
+          const Gap(20),
 
           // Consejos adicionales
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Constants.surface(context),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+              border: Border.all(color: Constants.border(context)),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.lightbulb_outline_rounded, color: Constants.kSecondaryColor, size: 22),
-                    Gap(10),
+                    Icon(Icons.lightbulb_outline_rounded, color: Constants.accent(context), size: 20),
+                    const Gap(10),
                     MyText(
                       'Recomendaciones para tu Práctica',
-                      fontSize: 15.5,
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kTextColor,
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
                     ),
                   ],
                 ),
-                Gap(12),
+                const Gap(10),
                 MyText(
                   '◆ Rutina: Practica a la misma hora para condicionar a tu cerebro al descanso.\n'
                   '◆ Ambiente: Reduce luces artificiales y mantén el cuarto fresco y ventilado.\n'
                   '◆ Desconexión: Deja tu celular fuera del alcance 30 minutos antes.',
-                  fontSize: 13.5,
-                  color: Constants.kTextSecondaryColor,
+                  fontSize: 13,
+                  color: Constants.textSecondary(context),
+                  height: 1.5,
                 ),
               ],
             ),
           ),
 
-          const Gap(26),
+          const Gap(22),
 
           // Videos Section
-          const MyText(
-            'Sesiones y Videos de Relajación',
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextColor,
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: MyText(
+              'Sesiones y Videos de Relajación',
+              fontSize: 15.5,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
+            ),
           ),
           const Gap(10),
 
           ...videos.map((video) => Container(
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color: Constants.kSurfaceColor,
+                  color: Constants.surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Constants.kBorderColor),
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Constants.kPrimaryColor.withValues(alpha: 0.18),
+                      color: Constants.surfaceLight(context),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.play_arrow_rounded,
-                      color: Constants.kSecondaryColor,
-                      size: 24,
+                      color: Constants.kSageGreen,
+                      size: 22,
                     ),
                   ),
                   title: MyText(
                     video["title"]!,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14.5,
-                    color: Constants.kTextColor,
+                    fontSize: 14,
+                    color: Constants.textPrimary(context),
                   ),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: Constants.kSecondaryColor),
+                  trailing: Icon(Icons.chevron_right_rounded, color: Constants.textSecondary(context), size: 20),
                   onTap: () {
                     Get.to(() => MyVideoPlayer(url: video["url"]!, title: video["title"]!));
                   },
@@ -288,7 +280,7 @@ class MeditationDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: MyTitleAppBar(title: title),
       ),
@@ -297,14 +289,44 @@ class MeditationDetailScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Constants.kSurfaceColor,
+            color: Constants.surface(context),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Constants.kBorderColor),
+            border: Border.all(color: Constants.border(context)),
           ),
-          child: MyText(
-            instructions,
-            fontSize: 15,
-            color: Constants.kTextColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Constants.surfaceLight(context),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(Icons.self_improvement_rounded, color: Constants.accent(context), size: 24),
+                  ),
+                  const Gap(14),
+                  Expanded(
+                    child: MyText(
+                      title,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(18),
+              Divider(color: Constants.border(context)),
+              const Gap(14),
+              MyText(
+                instructions,
+                fontSize: 14,
+                color: Constants.textPrimary(context),
+                height: 1.55,
+              ),
+            ],
           ),
         ),
       ),
@@ -313,166 +335,104 @@ class MeditationDetailScreen extends StatelessWidget {
 }
 
 class MyVideoPlayer extends StatefulWidget {
-  final String title;
   final String url;
+  final String title;
 
   const MyVideoPlayer({super.key, required this.url, required this.title});
 
   @override
-  MyVideoPlayerState createState() => MyVideoPlayerState();
+  State<MyVideoPlayer> createState() => _MyVideoPlayerState();
 }
 
-class MyVideoPlayerState extends State<MyVideoPlayer> {
-  YoutubePlayerController? _controller;
-  bool get _isMobileNative =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
-
-  void listener() {
-    if (_controller?.value.playerState == PlayerState.ended) {
-      Get.back();
-    }
-  }
+class _MyVideoPlayerState extends State<MyVideoPlayer> {
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    if (_isMobileNative) {
-      final String? videoId = YoutubePlayer.convertUrlToId(widget.url);
-      if (videoId != null) {
-        _controller = YoutubePlayerController(
-          initialVideoId: videoId,
-          flags: const YoutubePlayerFlags(
-            autoPlay: true,
-            mute: false,
-            forceHD: false,
-          ),
-        );
-      }
+    if (!kIsWeb) {
+      final videoId = YoutubePlayer.convertUrlToId(widget.url) ?? '';
+      _controller = YoutubePlayerController(
+        initialVideoId: videoId,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+          enableCaption: false,
+        ),
+      );
     }
   }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    if (!kIsWeb) {
+      _controller.dispose();
+    }
     super.dispose();
+  }
+
+  Future<void> _launchExternal() async {
+    final Uri uri = Uri.parse(widget.url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      MySnackBar.showSnackBarError('No se pudo abrir el enlace');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return Scaffold(
+        backgroundColor: Constants.background(context),
+        appBar: AppBar(
+          title: MyTitleAppBar(title: widget.title),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.ondemand_video_rounded, size: 64, color: Constants.kSageGreen),
+                const Gap(16),
+                MyText(
+                  widget.title,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Constants.textPrimary(context),
+                  textAlign: TextAlign.center,
+                ),
+                const Gap(24),
+                MyButton(
+                  text: 'Ver en YouTube',
+                  onPressed: _launchExternal,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const MyTitleAppBar(title: 'Reproductor de Relajación'),
+        title: MyTitleAppBar(title: widget.title),
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: _isMobileNative && _controller != null
-                  ? YoutubePlayer(
-                      controller: _controller!,
-                      showVideoProgressIndicator: true,
-                      progressIndicatorColor: Constants.kSecondaryColor,
-                      progressColors: const ProgressBarColors(
-                        playedColor: Constants.kSecondaryColor,
-                        handleColor: Constants.kPrimaryColor,
-                      ),
-                      onReady: () {
-                        _controller!.addListener(listener);
-                      },
-                    )
-                  : InkWell(
-                      onTap: () => _launchURL(widget.url),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          color: Constants.kSurfaceLightColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Constants.kBorderColor),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Constants.kPrimaryColor.withValues(alpha: 0.25),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 40),
-                            ),
-                            const Gap(12),
-                            const MyText(
-                              'Toca para abrir y reproducir el video',
-                              color: Constants.kTextColor,
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-            ),
-            const Gap(18),
-            MyText(
-              widget.title,
-              color: Constants.kTextColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              textAlign: TextAlign.center,
-            ),
-            const Gap(14),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Constants.kSurfaceColor,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Constants.kBorderColor),
-              ),
-              child: const MyText(
-                'Acomódate en una posición relajada, cierra los ojos o mantén la mirada serena mientras la música y los sonidos reducen tu frecuencia mental hacia el estado de sueño.',
-                color: Constants.kTextSecondaryColor,
-                fontSize: 14,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const Gap(24),
-            MyButton(
-              text: 'Abrir en YouTube',
-              onPressed: () => _launchURL(widget.url),
-              color: Constants.kSurfaceLightColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/youtube.png', width: 28, height: 28),
-                  const Gap(10),
-                  const MyText(
-                    'Ver en YouTube',
-                    color: Constants.kTextColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-            ),
-          ],
+      body: Center(
+        child: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Constants.kSageGreen,
+          progressColors: const ProgressBarColors(
+            playedColor: Constants.kSageGreen,
+            handleColor: Constants.kSageGreen,
+          ),
         ),
       ),
     );
-  }
-}
-
-void _launchURL(String url) async {
-  final Uri uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  } else {
-    MySnackBar.showSnackBarError('No se pudo abrir la URL');
-    throw 'No se pudo abrir la URL';
   }
 }

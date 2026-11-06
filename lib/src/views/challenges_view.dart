@@ -107,7 +107,7 @@ class _ChallengesViewState extends State<ChallengesView> {
     final double progress = completedCount / challenges.length;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Desafíos de Sueño'),
       ),
@@ -116,24 +116,13 @@ class _ChallengesViewState extends State<ChallengesView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tarjeta Gamificada de Progreso y Rango
+            // Tarjeta de Progreso y Rango
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.4), width: 1.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Constants.kPrimaryColor.withValues(alpha: 0.15),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: Constants.surface(context),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Constants.border(context), width: 1.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,43 +135,43 @@ class _ChallengesViewState extends State<ChallengesView> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Constants.kSecondaryColor.withValues(alpha: 0.2),
+                              color: Constants.surfaceLight(context),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.emoji_events_rounded, color: Constants.kSecondaryColor, size: 22),
+                            child: const Icon(Icons.emoji_events_rounded, color: Color(0xFFD49E3D), size: 20),
                           ),
                           const Gap(10),
                           MyText(
                             _currentRank,
-                            color: Constants.kTextColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            color: Constants.textPrimary(context),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15.5,
                           ),
                         ],
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Constants.kMintColor.withValues(alpha: 0.18),
+                          color: Constants.kSageGreen.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: MyText(
                           '$completedCount de ${challenges.length}',
-                          color: Constants.kMintColor,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.bold,
+                          color: Constants.kSageGreen,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-                  const Gap(16),
+                  const Gap(14),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                     child: LinearProgressIndicator(
                       value: progress,
-                      minHeight: 9,
-                      backgroundColor: Constants.kSurfaceLightColor,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Constants.kMintColor),
+                      minHeight: 7,
+                      backgroundColor: Constants.surfaceLight(context),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Constants.kSageGreen),
                     ),
                   ),
                   const Gap(10),
@@ -191,20 +180,20 @@ class _ChallengesViewState extends State<ChallengesView> {
                         ? '¡Felicidades! Has dominado todos los hábitos de descanso.'
                         : 'Toca cada tarjeta para marcar los hábitos que vayas cumpliendo.',
                     fontSize: 12,
-                    color: Constants.kTextSecondaryColor,
+                    color: Constants.textSecondary(context),
                   ),
                 ],
               ),
             ),
-            const Gap(22),
+            const Gap(20),
 
-            const Padding(
-              padding: EdgeInsets.only(left: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
               child: MyText(
                 'Tus Desafíos Semanales',
-                fontSize: 16.5,
-                fontWeight: FontWeight.bold,
-                color: Constants.kTextColor,
+                fontSize: 15.5,
+                fontWeight: FontWeight.w600,
+                color: Constants.textPrimary(context),
               ),
             ),
             const Gap(12),
@@ -222,25 +211,18 @@ class _ChallengesViewState extends State<ChallengesView> {
                 return GestureDetector(
                   onTap: () => _toggleChallenge(id),
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(18),
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? Constants.kMintColor.withValues(alpha: 0.08)
-                          : Constants.kSurfaceColor,
+                          ? Constants.kSageGreen.withValues(alpha: 0.1)
+                          : Constants.surface(context),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isCompleted ? Constants.kMintColor.withValues(alpha: 0.7) : Constants.kBorderColor,
-                        width: isCompleted ? 1.5 : 1,
+                        color: isCompleted ? Constants.kSageGreen.withValues(alpha: 0.6) : Constants.border(context),
+                        width: isCompleted ? 1.4 : 1,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,36 +230,36 @@ class _ChallengesViewState extends State<ChallengesView> {
                         Row(
                           children: [
                             AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: 26,
-                              height: 26,
+                              duration: const Duration(milliseconds: 180),
+                              width: 24,
+                              height: 24,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isCompleted ? Constants.kMintColor : Colors.transparent,
+                                color: isCompleted ? Constants.kSageGreen : Colors.transparent,
                                 border: Border.all(
-                                  color: isCompleted ? Constants.kMintColor : Constants.kTextSecondaryColor,
-                                  width: 2,
+                                  color: isCompleted ? Constants.kSageGreen : Constants.border(context),
+                                  width: 1.8,
                                 ),
                               ),
                               child: isCompleted
-                                  ? const Icon(Icons.check, size: 16, color: Colors.black)
+                                  ? const Icon(Icons.check, size: 15, color: Colors.white)
                                   : null,
                             ),
                             const Gap(12),
                             Expanded(
                               child: MyText(
                                 challenge["title"]!,
-                                color: isCompleted ? Constants.kMintColor : Constants.kTextColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15.5,
+                                color: isCompleted ? Constants.kSageGreen : Constants.textPrimary(context),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14.5,
                               ),
                             ),
                           ],
                         ),
-                        const Gap(12),
-                        _buildInfoRow('Objetivo:', challenge["goal"]!, Constants.kSecondaryColor),
-                        const Gap(8),
-                        _buildInfoRow('Cómo lograrlo:', challenge["solution"]!, Constants.kTextColor),
+                        const Gap(10),
+                        _buildInfoRow(context, 'Objetivo:', challenge["goal"]!, Constants.accent(context)),
+                        const Gap(6),
+                        _buildInfoRow(context, 'Cómo lograrlo:', challenge["solution"]!, Constants.textPrimary(context)),
                       ],
                     ),
                   ),
@@ -291,21 +273,21 @@ class _ChallengesViewState extends State<ChallengesView> {
     );
   }
 
-  Widget _buildInfoRow(String label, String content, Color labelColor) {
+  Widget _buildInfoRow(BuildContext context, String label, String content, Color labelColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MyText(
           label,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+          fontSize: 11.5,
+          fontWeight: FontWeight.w600,
           color: labelColor,
         ),
         const Gap(2),
         MyText(
           content,
-          fontSize: 13,
-          color: Constants.kTextSecondaryColor,
+          fontSize: 12.5,
+          color: Constants.textSecondary(context),
         ),
       ],
     );

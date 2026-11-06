@@ -61,6 +61,7 @@ class _MusicViewState extends State<MusicView> {
         _selectedMinutes = 0;
         _remainingSeconds = 0;
       });
+      MySnackBar.showSnackBarSuccess('Temporizador cancelado');
       return;
     }
 
@@ -69,16 +70,18 @@ class _MusicViewState extends State<MusicView> {
       _remainingSeconds = minutes * 60;
     });
 
+    MySnackBar.showSnackBarSuccess('Temporizador activado por $minutes minutos');
+
     _sleepTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
       if (_remainingSeconds <= 1) {
         timer.cancel();
-        HapticFeedback.mediumImpact();
         setState(() {
           _remainingSeconds = 0;
           _selectedMinutes = 0;
         });
-        MySnackBar.showSnackBarSuccess('🌙 Tu temporizador nocturno ha finalizado. ¡Dulces sueños!');
+        HapticFeedback.heavyImpact();
+        MySnackBar.showSnackBarSuccess('¡Tiempo de desconexión terminado! Es hora de dormir');
       } else {
         setState(() {
           _remainingSeconds--;
@@ -88,9 +91,9 @@ class _MusicViewState extends State<MusicView> {
   }
 
   String _formatCountdown(int totalSeconds) {
-    final m = (totalSeconds ~/ 60).toString().padLeft(2, '0');
-    final s = (totalSeconds % 60).toString().padLeft(2, '0');
-    return '$m:$s';
+    final m = totalSeconds ~/ 60;
+    final s = totalSeconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
   void _launchURL(String url) async {
@@ -105,7 +108,7 @@ class _MusicViewState extends State<MusicView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Música y Sonidos Relajantes'),
       ),
@@ -116,50 +119,47 @@ class _MusicViewState extends State<MusicView> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Constants.surface(context),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+              border: Border.all(color: Constants.border(context)),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.headphones_rounded, color: Constants.kSecondaryColor, size: 24),
-                    Gap(10),
+                    Icon(Icons.headphones_rounded, color: Constants.accent(context), size: 22),
+                    const Gap(10),
                     MyText(
                       'Sonidos para Inducir el Sueño',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kTextColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
                     ),
                   ],
                 ),
-                Gap(10),
+                const Gap(8),
                 MyText(
                   'El ruido blanco y la música de baja frecuencia calman la actividad cerebral, reduciendo el tiempo necesario para quedarse dormido.',
-                  fontSize: 13.5,
-                  color: Constants.kTextSecondaryColor,
+                  fontSize: 13,
+                  color: Constants.textSecondary(context),
+                  height: 1.45,
                 ),
               ],
             ),
           ),
           const Gap(16),
 
-          // Tarjeta de Temporizador de Relajación Nocturna (Sleep Timer)
+          // Tarjeta de Temporizador de Relajación Nocturna
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Constants.kSurfaceColor,
+              color: Constants.surface(context),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: _remainingSeconds > 0
-                    ? Constants.kMintColor.withValues(alpha: 0.5)
-                    : Constants.kBorderColor,
+                    ? Constants.kSageGreen.withValues(alpha: 0.6)
+                    : Constants.border(context),
               ),
             ),
             child: Column(
@@ -172,39 +172,39 @@ class _MusicViewState extends State<MusicView> {
                       children: [
                         Icon(
                           Icons.timer_outlined,
-                          color: _remainingSeconds > 0 ? Constants.kMintColor : Constants.kSecondaryColor,
-                          size: 22,
+                          color: _remainingSeconds > 0 ? Constants.kSageGreen : Constants.accent(context),
+                          size: 20,
                         ),
                         const Gap(8),
-                        const MyText(
+                        MyText(
                           'Temporizador de Desconexión',
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Constants.kTextColor,
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: Constants.textPrimary(context),
                         ),
                       ],
                     ),
                     if (_remainingSeconds > 0)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Constants.kMintColor.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          color: Constants.kSageGreen.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: MyText(
                           _formatCountdown(_remainingSeconds),
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Constants.kMintColor,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Constants.kSageGreen,
                         ),
                       ),
                   ],
                 ),
                 const Gap(6),
-                const MyText(
-                  'Programa cuánto tiempo dedicarás a escuchar música o leer antes de cerrar los ojos:',
-                  fontSize: 12.5,
-                  color: Constants.kTextSecondaryColor,
+                MyText(
+                  'Programa cuánto tiempo dedicarás a escuchar música antes de cerrar los ojos:',
+                  fontSize: 12,
+                  color: Constants.textSecondary(context),
                 ),
                 const Gap(12),
                 Wrap(
@@ -215,137 +215,55 @@ class _MusicViewState extends State<MusicView> {
                     return ChoiceChip(
                       label: MyText(
                         '$min min',
-                        fontSize: 12.5,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? Constants.kBackgroundColor : Constants.kTextColor,
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        color: isSelected ? Constants.primaryContent(context) : Constants.textPrimary(context),
                       ),
                       selected: isSelected,
-                      selectedColor: Constants.kMintColor,
-                      backgroundColor: Constants.kBackgroundColor,
-                      side: BorderSide(
-                        color: isSelected ? Constants.kMintColor : Constants.kBorderColor,
-                      ),
-                      onSelected: (_) => _startTimer(isSelected ? 0 : min),
+                      selectedColor: Constants.primary(context),
+                      backgroundColor: Constants.surfaceLight(context),
+                      side: BorderSide(color: isSelected ? Colors.transparent : Constants.border(context)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      onSelected: (_) => _startTimer(min),
                     );
-                  }).toList(),
+                  }).toList()
+                    ..add(
+                      ChoiceChip(
+                        label: MyText(
+                          'Apagar',
+                          fontSize: 12,
+                          color: Constants.textSecondary(context),
+                        ),
+                        selected: false,
+                        backgroundColor: Constants.surfaceLight(context),
+                        side: BorderSide(color: Constants.border(context)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        onSelected: (_) => _startTimer(0),
+                      ),
+                    ),
                 ),
               ],
             ),
           ),
           const Gap(22),
 
-          const Padding(
-            padding: EdgeInsets.only(left: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
             child: MyText(
               'Playlists recomendadas en Spotify',
-              fontSize: 16.5,
-              fontWeight: FontWeight.bold,
-              color: Constants.kTextColor,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
             ),
           ),
-          const Gap(14),
+          const Gap(12),
 
-          // Grid moderno de tarjetas musicales
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 14,
-              childAspectRatio: 0.72,
-            ),
-            itemCount: musicData.length,
-            itemBuilder: (context, index) {
-              final item = musicData[index];
-              return InkWell(
-                onTap: () => _launchURL(item.link),
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Constants.kSurfaceColor,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Constants.kBorderColor),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(17)),
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              Image.network(
-                                item.imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Constants.kSurfaceLightColor,
-                                    child: const Center(
-                                      child: Icon(Icons.music_note_rounded, color: Constants.kSecondaryColor, size: 36),
-                                    ),
-                                  );
-                                },
-                              ),
-                              Positioned(
-                                right: 8,
-                                bottom: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.7),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.play_arrow_rounded,
-                                    color: Constants.kMintColor,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MyText(
-                              item.title,
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.bold,
-                              color: Constants.kTextColor,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const Gap(4),
-                            MyText(
-                              item.description,
-                              fontSize: 11.5,
-                              color: Constants.kTextSecondaryColor,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          const Gap(24),
+          // Lista de Tarjetas
+          ...musicData.map((data) => _MusicCard(
+                data: data,
+                onTap: () => _launchURL(data.link),
+              )),
+          const Gap(20),
         ],
       ),
     );
@@ -364,4 +282,76 @@ class MusicCardData {
     required this.imageUrl,
     required this.link,
   });
+}
+
+class _MusicCard extends StatelessWidget {
+  final MusicCardData data;
+  final VoidCallback onTap;
+
+  const _MusicCard({required this.data, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Constants.surface(context),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Constants.border(context)),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                data.imageUrl,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 60,
+                  height: 60,
+                  color: Constants.surfaceLight(context),
+                  child: Icon(Icons.music_note, color: Constants.accent(context)),
+                ),
+              ),
+            ),
+            const Gap(14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MyText(
+                    data.title,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: Constants.textPrimary(context),
+                  ),
+                  const Gap(3),
+                  MyText(
+                    data.description,
+                    fontSize: 12,
+                    color: Constants.textSecondary(context),
+                  ),
+                ],
+              ),
+            ),
+            const Gap(10),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Constants.surfaceLight(context),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.play_arrow_rounded, color: Constants.kSageGreen, size: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

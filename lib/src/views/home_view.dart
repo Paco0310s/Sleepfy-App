@@ -45,52 +45,49 @@ class HomeView extends StatelessWidget {
     final TestProvider testProvider = Provider.of<TestProvider>(context);
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Constants.kPrimaryColor,
-        elevation: 6,
+        backgroundColor: Constants.primary(context),
+        elevation: 2,
         onPressed: () => Get.to(() => const AiChatView()),
-        icon: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
-        label: const MyText(
-          'AI Coach',
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 13.5,
+        icon: Icon(Icons.auto_awesome, color: Constants.primaryContent(context), size: 18),
+        label: MyText(
+          'Sleepfy AI',
+          color: Constants.primaryContent(context),
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
         ),
       ),
       body: SafeArea(
         child: Stack(
           children: [
             RefreshIndicator(
-              color: Constants.kPrimaryColor,
-              backgroundColor: Constants.kSurfaceColor,
+              color: Constants.accent(context),
+              backgroundColor: Constants.surface(context),
               onRefresh: () => testProvider.refreshRoutine(),
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  // Header elegante con logo y saludo inteligente
+                  // Header elegante y minimalista fiel a los colores del logo
                   SliverToBoxAdapter(
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.only(top: 30, bottom: 20),
-                    decoration: const BoxDecoration(
-                      gradient: Constants.kHeaderGradient,
+                    padding: const EdgeInsets.only(top: 26, bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Constants.background(context),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 110,
-                          height: 110,
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Constants.kPrimaryColor.withValues(alpha: 0.25),
-                                blurRadius: 25,
-                                spreadRadius: 4,
-                              ),
-                            ],
+                            border: Border.all(
+                              color: Constants.border(context),
+                              width: 1.5,
+                            ),
                           ),
                           child: ClipOval(
                             child: Image.asset(
@@ -100,35 +97,35 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                         const Gap(14),
-                        const MyText(
+                        MyText(
                           'Sleepfy',
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Constants.kTextColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                          color: Constants.textPrimary(context),
                         ),
                         const Gap(4),
-                        const MyText(
+                        MyText(
                           'Tu guía hacia el descanso profundo',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Constants.kTextSecondaryColor,
+                          fontSize: 13.5,
+                          color: Constants.textSecondary(context),
                         ),
                         const Gap(12),
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          margin: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Constants.kSurfaceColor.withValues(alpha: 0.85),
+                            color: Constants.surface(context),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Constants.kSecondaryColor.withValues(alpha: 0.35),
+                              color: Constants.border(context),
                             ),
                           ),
                           child: MyText(
                             _getDynamicGreeting(),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: Constants.kTextColor,
+                            color: Constants.textPrimary(context),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -144,36 +141,25 @@ class HomeView extends StatelessWidget {
                     child: Builder(builder: (context) {
                       if (testProvider.isLoading) {
                         return Container(
-                          padding: const EdgeInsets.all(30),
+                          padding: const EdgeInsets.all(28),
                           decoration: BoxDecoration(
-                            color: Constants.kSurfaceColor,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Constants.kBorderColor),
+                            color: Constants.surface(context),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: Constants.border(context)),
                           ),
-                          child: const Center(
-                            child: CircularProgressIndicator(color: Constants.kPrimaryColor),
+                          child: Center(
+                            child: CircularProgressIndicator(color: Constants.accent(context)),
                           ),
                         );
                       }
 
                       if (testProvider.testFinished) {
                         return Container(
-                          padding: const EdgeInsets.all(22),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.4), width: 1.2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Constants.kPrimaryColor.withValues(alpha: 0.15),
-                                blurRadius: 18,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
+                            color: Constants.surface(context),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: Constants.border(context), width: 1.2),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,50 +169,50 @@ class HomeView extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Constants.kMintColor.withValues(alpha: 0.15),
+                                      color: Constants.kSageGreen.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: const Icon(
                                       Icons.check_circle_outline_rounded,
-                                      color: Constants.kMintColor,
-                                      size: 24,
+                                      color: Constants.kSageGreen,
+                                      size: 22,
                                     ),
                                   ),
                                   const Gap(12),
-                                  const Expanded(
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         MyText(
-                                          '¡Cuestionario Completado!',
-                                          color: Constants.kTextColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17,
+                                          'Cuestionario completado',
+                                          color: Constants.textPrimary(context),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
                                         ),
-                                        Gap(2),
+                                        const Gap(2),
                                         MyText(
-                                          'Tu rutina de sueño está lista',
-                                          color: Constants.kTextSecondaryColor,
-                                          fontSize: 13,
+                                          'Tu rutina de descanso está lista',
+                                          color: Constants.textSecondary(context),
+                                          fontSize: 12.5,
                                         ),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
-                              const Gap(18),
+                              const Gap(16),
                               MyButton(
                                 text: 'Ver mi rutina personalizada',
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.auto_awesome, size: 20, color: Colors.white),
-                                    Gap(10),
+                                    Icon(Icons.auto_awesome, size: 18, color: Constants.primaryContent(context)),
+                                    const Gap(8),
                                     MyText(
                                       'Ver mi rutina personalizada',
-                                      fontSize: 15,
+                                      fontSize: 14.5,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                                      color: Constants.primaryContent(context),
                                     ),
                                   ],
                                 ),
@@ -234,14 +220,14 @@ class HomeView extends StatelessWidget {
                                   Get.to(() => const ResultsView());
                                 },
                               ),
-                              const Gap(8),
+                              const Gap(6),
                               Center(
                                 child: TextButton.icon(
-                                  icon: const Icon(Icons.refresh_rounded, size: 16, color: Constants.kSecondaryColor),
-                                  label: const MyText(
+                                  icon: Icon(Icons.refresh_rounded, size: 15, color: Constants.textSecondary(context)),
+                                  label: MyText(
                                     'Reevaluar mis hábitos de sueño',
-                                    color: Constants.kSecondaryColor,
-                                    fontSize: 13,
+                                    color: Constants.textSecondary(context),
+                                    fontSize: 12.5,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   onPressed: () => testProvider.startRetake(),
@@ -253,22 +239,11 @@ class HomeView extends StatelessWidget {
                       }
 
                       return Container(
-                        padding: const EdgeInsets.all(22),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF1E293B), Color(0xFF26334D)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Constants.kBorderColor, width: 1.2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.25),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                          color: Constants.surface(context),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: Constants.border(context), width: 1.2),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,56 +253,57 @@ class HomeView extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: Constants.kPrimaryColor.withValues(alpha: 0.18),
+                                    color: Constants.surfaceLight(context),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.bedtime_outlined,
-                                    color: Constants.kSecondaryColor,
-                                    size: 24,
+                                    color: Constants.accent(context),
+                                    size: 22,
                                   ),
                                 ),
                                 const Gap(12),
-                                const Expanded(
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       MyText(
-                                        'Análisis de Sueño',
-                                        color: Constants.kTextColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17,
+                                        'Análisis de descanso',
+                                        color: Constants.textPrimary(context),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
                                       ),
-                                      Gap(2),
+                                      const Gap(2),
                                       MyText(
                                         'Descubre por qué te cuesta dormir',
-                                        color: Constants.kTextSecondaryColor,
-                                        fontSize: 13,
+                                        color: Constants.textSecondary(context),
+                                        fontSize: 12.5,
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                            const Gap(14),
-                            const MyText(
-                              'Responde un cuestionario rápido para generar una rutina de descanso diseñada para ti con IA.',
-                              color: Constants.kTextSecondaryColor,
-                              fontSize: 13.5,
+                            const Gap(12),
+                            MyText(
+                              'Responde un cuestionario clínico rápido para que Sleepfy diseñe una rutina personalizada según tus hábitos.',
+                              color: Constants.textSecondary(context),
+                              fontSize: 13,
+                              height: 1.45,
                             ),
-                            const Gap(18),
+                            const Gap(16),
                             MyButton(
                               text: 'Comenzar cuestionario',
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.play_arrow_rounded, size: 22, color: Colors.white),
-                                  Gap(8),
+                                  Icon(Icons.play_arrow_rounded, size: 20, color: Constants.primaryContent(context)),
+                                  const Gap(6),
                                   MyText(
                                     'Comenzar cuestionario',
-                                    fontSize: 15,
+                                    fontSize: 14.5,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: Constants.primaryContent(context),
                                   ),
                                 ],
                               ),
@@ -365,77 +341,66 @@ class HomeView extends StatelessWidget {
                 // Banner de adquisición del Kit Sleepfy
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF1E293B), Color(0xFF172554)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Constants.kSecondaryColor.withValues(alpha: 0.3), width: 1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
+                        color: Constants.surface(context),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: Constants.border(context), width: 1),
                       ),
                       child: Column(
                         children: [
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+                                  color: Constants.surfaceLight(context),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  Icons.spa_rounded,
-                                  color: Constants.kSecondaryColor,
-                                  size: 26,
+                                  Icons.spa_outlined,
+                                  color: Constants.kSageGreen,
+                                  size: 24,
                                 ),
                               ),
                               const Gap(14),
-                              const Expanded(
+                              Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     MyText(
                                       'Kit Sleepfy de Relajación',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Constants.kTextColor,
+                                      fontSize: 15.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: Constants.textPrimary(context),
                                     ),
-                                    Gap(4),
+                                    const Gap(2),
                                     MyText(
                                       'Aromaterapia, bálsamos e infusiones relajantes',
-                                      fontSize: 12.5,
-                                      color: Constants.kTextSecondaryColor,
+                                      fontSize: 12,
+                                      color: Constants.textSecondary(context),
                                     ),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                          const Gap(16),
+                          const Gap(14),
                           MyButton(
-                            color: Constants.kSecondaryColor.withValues(alpha: 0.9),
-                            text: 'Adquiere tu kit aquí',
-                            child: const Row(
+                            outlined: true,
+                            text: 'Conocer y adquirir el kit',
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.shopping_bag_outlined, color: Constants.kBackgroundColor, size: 20),
-                                Gap(8),
+                                Icon(Icons.shopping_bag_outlined, color: Constants.textPrimary(context), size: 18),
+                                const Gap(8),
                                 MyText(
                                   'Conocer y adquirir el kit',
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: Constants.kBackgroundColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Constants.textPrimary(context),
                                 ),
                               ],
                             ),
@@ -448,10 +413,10 @@ class HomeView extends StatelessWidget {
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    backgroundColor: Constants.kSurfaceColor,
+                                    backgroundColor: Constants.surface(context),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: const BorderSide(color: Constants.kBorderColor),
+                                      borderRadius: BorderRadius.circular(18),
+                                      side: BorderSide(color: Constants.border(context)),
                                     ),
                                     title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
                                     content: Wrap(
@@ -533,18 +498,12 @@ class _HeaderFloatingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Constants.kSurfaceColor.withValues(alpha: 0.8),
+        color: Constants.surface(context),
         shape: BoxShape.circle,
-        border: Border.all(color: Constants.kBorderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 10,
-          ),
-        ],
+        border: Border.all(color: Constants.border(context), width: 1),
       ),
       child: IconButton(
-        icon: Icon(icon, color: Constants.kTextColor, size: 21),
+        icon: Icon(icon, color: Constants.textPrimary(context), size: 20),
         onPressed: onPressed,
       ),
     );
@@ -561,7 +520,7 @@ class SocialNetworkItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyButton(
-      color: Constants.kSurfaceLightColor,
+      color: Constants.surfaceLight(context),
       text: text,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -570,7 +529,7 @@ class SocialNetworkItem extends StatelessWidget {
           const Gap(10),
           MyText(
             text,
-            color: Constants.kTextColor,
+            color: Constants.textPrimary(context),
             fontWeight: FontWeight.w500,
           ),
         ],
@@ -615,29 +574,22 @@ class _SleepSummaryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Constants.kSurfaceColor,
+          color: Constants.surface(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Constants.kBorderColor),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          border: Border.all(color: Constants.border(context)),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
-                color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+                color: Constants.surfaceLight(context),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.bedtime_rounded,
-                color: Constants.kSecondaryColor,
-                size: 22,
+              child: Icon(
+                Icons.bedtime_outlined,
+                color: Constants.accent(context),
+                size: 20,
               ),
             ),
             const Gap(12),
@@ -647,21 +599,21 @@ class _SleepSummaryCard extends StatelessWidget {
                 children: [
                   MyText(
                     count > 0 ? 'Promedio: ${avgHours.toStringAsFixed(1)} hrs / noche' : 'Registra tus horas de sueño',
-                    color: Constants.kTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.5,
+                    color: Constants.textPrimary(context),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                   const Gap(2),
                   MyText(
-                    count > 0 ? '$count de 7 días registrados esta semana' : 'Toca el botón para registrar tu descanso diario',
-                    color: Constants.kTextSecondaryColor,
+                    count > 0 ? '$count de 7 días registrados' : 'Toca para registrar tu descanso diario',
+                    color: Constants.textSecondary(context),
                     fontSize: 12,
                   ),
                 ],
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.add_circle_outline_rounded, color: Constants.kSecondaryColor, size: 24),
+              icon: Icon(Icons.add_circle_outline_rounded, color: Constants.accent(context), size: 22),
               tooltip: 'Registrar horas',
               onPressed: () => Get.to(() => const ControlDreamsView()),
             ),
@@ -682,13 +634,13 @@ class _QuickToolsBar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 10),
             child: MyText(
               'Herramientas Rápidas',
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Constants.kTextColor,
+              fontSize: 14.5,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
             ),
           ),
           SingleChildScrollView(
@@ -697,36 +649,31 @@ class _QuickToolsBar extends StatelessWidget {
               children: [
                 _QuickToolPill(
                   icon: Icons.auto_awesome,
-                  color: const Color(0xFFA78BFA),
                   title: 'Hablar con IA',
                   onTap: () => Get.to(() => const AiChatView()),
                 ),
-                const Gap(10),
+                const Gap(8),
                 _QuickToolPill(
                   icon: Icons.calculate_outlined,
-                  color: Constants.kSecondaryColor,
                   title: 'Calculadora 90m',
                   onTap: () => Get.to(() => const SleepCalculatorView()),
                 ),
-                const Gap(10),
+                const Gap(8),
                 _QuickToolPill(
                   icon: Icons.air_rounded,
-                  color: Constants.kMintColor,
                   title: 'Respiración 4-7-8',
                   onTap: () => Get.to(() => const BreathingExerciseView()),
                 ),
-                const Gap(10),
+                const Gap(8),
                 _QuickToolPill(
                   icon: Icons.emoji_events_outlined,
-                  color: Constants.kWarningColor,
-                  title: 'Desafíos de Sueño',
+                  title: 'Desafíos',
                   onTap: () => Get.to(() => const ChallengesView()),
                 ),
-                const Gap(10),
+                const Gap(8),
                 _QuickToolPill(
                   icon: Icons.grid_view_rounded,
-                  color: const Color(0xFF818CF8),
-                  title: 'Todas las herramientas',
+                  title: 'Más herramientas',
                   onTap: () => Get.to(() => const ToolsView()),
                 ),
               ],
@@ -740,13 +687,11 @@ class _QuickToolsBar extends StatelessWidget {
 
 class _QuickToolPill extends StatelessWidget {
   final IconData icon;
-  final Color color;
   final String title;
   final VoidCallback onTap;
 
   const _QuickToolPill({
     required this.icon,
-    required this.color,
     required this.title,
     required this.onTap,
   });
@@ -756,36 +701,22 @@ class _QuickToolPill extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: Constants.kSurfaceColor,
+          color: Constants.surface(context),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          border: Border.all(color: Constants.border(context)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: color, size: 18),
-            ),
-            const Gap(10),
+            Icon(icon, color: Constants.accent(context), size: 17),
+            const Gap(8),
             MyText(
               title,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Constants.kTextColor,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: Constants.textPrimary(context),
             ),
           ],
         ),
@@ -828,19 +759,12 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Constants.kSurfaceColor,
+          color: Constants.surface(context),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: hasCheckedIn ? Constants.kMintColor.withValues(alpha: 0.4) : Constants.kBorderColor,
+            color: hasCheckedIn ? Constants.kSageGreen.withValues(alpha: 0.5) : Constants.border(context),
             width: 1.2,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: hasCheckedIn && currentMood != null
             ? Row(
@@ -848,7 +772,7 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Constants.kMintColor.withValues(alpha: 0.15),
+                      color: Constants.kSageGreen.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Text(currentMood["emoji"]!, style: const TextStyle(fontSize: 24)),
@@ -860,21 +784,21 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.check_circle_rounded, color: Constants.kMintColor, size: 16),
+                            const Icon(Icons.check_circle_rounded, color: Constants.kSageGreen, size: 16),
                             const Gap(6),
                             MyText(
                               'Hoy despertaste: ${currentMood["label"]}',
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Constants.kTextColor,
+                              color: Constants.textPrimary(context),
                             ),
                           ],
                         ),
                         const Gap(2),
-                        const MyText(
+                        MyText(
                           'Registro matutino guardado. ¡Que tengas un día excelente!',
                           fontSize: 12,
-                          color: Constants.kTextSecondaryColor,
+                          color: Constants.textSecondary(context),
                         ),
                       ],
                     ),
@@ -884,10 +808,10 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                       await UserPreferences.setMorningMood('');
                       setState(() {});
                     },
-                    child: const MyText(
+                    child: MyText(
                       'Cambiar',
                       fontSize: 12,
-                      color: Constants.kSecondaryColor,
+                      color: Constants.accent(context),
                     ),
                   ),
                 ],
@@ -895,23 +819,23 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.wb_sunny_rounded, color: Color(0xFFFBBF24), size: 20),
-                      Gap(8),
+                      const Icon(Icons.wb_sunny_rounded, color: Color(0xFFE5A93C), size: 20),
+                      const Gap(8),
                       MyText(
                         'Check-in Matutino: ¿Cómo despertaste hoy?',
                         fontSize: 14.5,
-                        fontWeight: FontWeight.bold,
-                        color: Constants.kTextColor,
+                        fontWeight: FontWeight.w600,
+                        color: Constants.textPrimary(context),
                       ),
                     ],
                   ),
                   const Gap(4),
-                  const MyText(
+                  MyText(
                     'Toca una opción para correlacionar tu descanso con tu energía diaria:',
                     fontSize: 12,
-                    color: Constants.kTextSecondaryColor,
+                    color: Constants.textSecondary(context),
                   ),
                   const Gap(14),
                   Row(
@@ -923,9 +847,9 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                             margin: const EdgeInsets.symmetric(horizontal: 3),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: Constants.kSurfaceLightColor,
+                              color: Constants.surfaceLight(context),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Constants.kBorderColor),
+                              border: Border.all(color: Constants.border(context)),
                             ),
                             child: Column(
                               children: [
@@ -935,7 +859,7 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                                   m["label"]!,
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w600,
-                                  color: Constants.kTextColor,
+                                  color: Constants.textPrimary(context),
                                   textAlign: TextAlign.center,
                                 ),
                               ],

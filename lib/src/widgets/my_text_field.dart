@@ -30,64 +30,62 @@ class MyTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(
-        color: Constants.kTextColor,
-        fontSize: 15,
+      style: TextStyle(
+        color: Constants.textPrimary(context),
+        fontSize: 14.5,
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Constants.kSurfaceColor,
+        fillColor: Constants.surface(context),
         labelText: text,
-        labelStyle: const TextStyle(
-          color: Constants.kTextSecondaryColor,
-          fontSize: 14,
+        labelStyle: TextStyle(
+          color: Constants.textSecondary(context),
+          fontSize: 13.5,
         ),
-        floatingLabelStyle: const TextStyle(
-          color: Constants.kSecondaryColor,
+        floatingLabelStyle: TextStyle(
+          color: Constants.textPrimary(context),
           fontWeight: FontWeight.w600,
-          fontSize: 16,
+          fontSize: 15,
         ),
-        prefixIconColor: Constants.kSecondaryColor,
-        suffixIconColor: Constants.kTextSecondaryColor,
+        prefixIconColor: Constants.textSecondary(context),
+        suffixIconColor: Constants.textSecondary(context),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kBorderColor,
-            width: 1.2,
+          borderSide: BorderSide(
+            color: Constants.border(context),
+            width: 1,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kPrimaryColor,
-            width: 2.0,
+          borderSide: BorderSide(
+            color: Constants.textPrimary(context),
+            width: 1.4,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
             color: Constants.kErrorColor,
-            width: 1.5,
+            width: 1,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
             color: Constants.kErrorColor,
-            width: 2.0,
+            width: 1.4,
           ),
         ),
       ),
-      cursorErrorColor: Constants.kErrorColor,
-      cursorColor: Constants.kSecondaryColor,
-      validator: validator,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       obscureText: obscureText,
       onChanged: onChanged,
+      validator: validator,
     );
   }
 }
@@ -120,59 +118,37 @@ class MyTextField2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(
-        color: Constants.kTextColor,
-        fontSize: 15,
+      style: TextStyle(
+        color: Constants.textPrimary(context),
+        fontSize: 14,
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Constants.kSurfaceColor,
+        fillColor: Constants.surfaceLight(context),
         hintText: text,
-        hintStyle: const TextStyle(
-          color: Constants.kTextSecondaryColor,
-          fontSize: 14,
+        hintStyle: TextStyle(
+          color: Constants.textSecondary(context),
+          fontSize: 13.5,
         ),
-        prefixIconColor: Constants.kSecondaryColor,
-        suffixIconColor: Constants.kTextSecondaryColor,
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Constants.border(context)),
+        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kBorderColor,
-            width: 1.2,
-          ),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Constants.border(context)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kPrimaryColor,
-            width: 2.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kErrorColor,
-            width: 1.5,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Constants.kErrorColor,
-            width: 2.0,
-          ),
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Constants.textPrimary(context), width: 1.2),
         ),
       ),
-      cursorErrorColor: Constants.kErrorColor,
-      cursorColor: Constants.kSecondaryColor,
-      validator: validator,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       obscureText: obscureText,
       onChanged: onChanged,
+      validator: validator,
     );
   }
 }

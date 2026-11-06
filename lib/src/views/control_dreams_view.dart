@@ -18,7 +18,7 @@ class ControlDreamsView extends StatelessWidget {
     final Time timeEnd = prov.timeEnd;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Ciclos de Sueño'),
       ),
@@ -31,36 +31,32 @@ class ControlDreamsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: Constants.surface(context),
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+                border: Border.all(color: Constants.border(context)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.bedtime_outlined, color: Constants.kSecondaryColor, size: 28),
-                  Gap(14),
+                  Icon(Icons.bedtime_outlined, color: Constants.accent(context), size: 24),
+                  const Gap(14),
                   Expanded(
                     child: MyText(
                       'Monitorea a qué hora te duermes y despiertas para alimentar tus estadísticas y ajustar tus ritmos de sueño.',
-                      fontSize: 13.5,
-                      color: Constants.kTextColor,
+                      fontSize: 13,
+                      color: Constants.textPrimary(context),
                     ),
                   ),
                 ],
               ),
             ),
-            const Gap(22),
+            const Gap(18),
 
             // Selector Hora Inicio
             _TimePickerCard(
               title: 'Hora de ir a la cama',
               subtitle: 'Momento en que apagas la luz para descansar',
-              icon: Icons.nightlight_round,
-              iconColor: Constants.kSecondaryColor,
+              icon: Icons.bedtime_outlined,
+              iconColor: Constants.accent(context),
               timeString: timeStart.format(context),
               onTap: () {
                 Navigator.of(context).push(
@@ -71,12 +67,12 @@ class ControlDreamsView extends StatelessWidget {
                     sunset: const TimeOfDay(hour: 18, minute: 0),
                     duskSpanInMinutes: 120,
                     onChange: prov.onTimeStartChanged,
-                    okStyle: const TextStyle(
-                      color: Constants.kPrimaryColor,
-                      fontWeight: FontWeight.bold,
+                    okStyle: TextStyle(
+                      color: Constants.primary(context),
+                      fontWeight: FontWeight.w600,
                     ),
-                    cancelStyle: const TextStyle(
-                      color: Constants.kTextSecondaryColor,
+                    cancelStyle: TextStyle(
+                      color: Constants.textSecondary(context),
                     ),
                     okText: 'Aceptar',
                     cancelText: 'Cancelar',
@@ -84,14 +80,14 @@ class ControlDreamsView extends StatelessWidget {
                 );
               },
             ),
-            const Gap(16),
+            const Gap(14),
 
             // Selector Hora Fin
             _TimePickerCard(
               title: 'Hora de despertar',
               subtitle: 'Momento en que inicia tu día',
               icon: Icons.wb_sunny_rounded,
-              iconColor: const Color(0xFFF59E0B),
+              iconColor: const Color(0xFFD49E3D),
               timeString: timeEnd.format(context),
               onTap: () {
                 Navigator.of(context).push(
@@ -102,12 +98,12 @@ class ControlDreamsView extends StatelessWidget {
                     sunset: const TimeOfDay(hour: 18, minute: 0),
                     duskSpanInMinutes: 120,
                     onChange: prov.onTimeEndChanged,
-                    okStyle: const TextStyle(
-                      color: Constants.kPrimaryColor,
-                      fontWeight: FontWeight.bold,
+                    okStyle: TextStyle(
+                      color: Constants.primary(context),
+                      fontWeight: FontWeight.w600,
                     ),
-                    cancelStyle: const TextStyle(
-                      color: Constants.kTextSecondaryColor,
+                    cancelStyle: TextStyle(
+                      color: Constants.textSecondary(context),
                     ),
                     okText: 'Aceptar',
                     cancelText: 'Cancelar',
@@ -115,29 +111,30 @@ class ControlDreamsView extends StatelessWidget {
                 );
               },
             ),
-            const Gap(32),
+            const Gap(28),
 
             // Botón Guardar
             MyButton(
               text: 'Guardar registro de hoy',
               child: prov.loadingSendSchedule
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
+                  ? SizedBox(
+                      width: 22,
+                      height: 22,
                       child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 2.2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryContent(context)),
                       ),
                     )
-                  : const Row(
+                  : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.save_rounded, color: Colors.white, size: 20),
-                        Gap(10),
+                        Icon(Icons.save_rounded, color: Constants.primaryContent(context), size: 19),
+                        const Gap(8),
                         MyText(
                           'Guardar registro de hoy',
-                          color: Colors.white,
+                          color: Constants.primaryContent(context),
                           fontWeight: FontWeight.w600,
+                          fontSize: 14.5,
                         ),
                       ],
                     ),
@@ -177,43 +174,36 @@ class _TimePickerCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Constants.kSurfaceColor,
+          color: Constants.surface(context),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Constants.kBorderColor, width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: Constants.border(context)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.15),
+                color: iconColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(icon, color: iconColor, size: 24),
             ),
-            const Gap(14),
+            const Gap(16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MyText(
                     title,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Constants.kTextColor,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: Constants.textPrimary(context),
                   ),
-                  const Gap(3),
+                  const Gap(2),
                   MyText(
                     subtitle,
                     fontSize: 12,
-                    color: Constants.kTextSecondaryColor,
+                    color: Constants.textSecondary(context),
                   ),
                 ],
               ),
@@ -221,15 +211,15 @@ class _TimePickerCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Constants.kSurfaceLightColor,
+                color: Constants.surfaceLight(context),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Constants.kBorderColor),
+                border: Border.all(color: Constants.border(context)),
               ),
               child: MyText(
                 timeString,
                 fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Constants.kSecondaryColor,
+                fontWeight: FontWeight.w600,
+                color: Constants.textPrimary(context),
               ),
             ),
           ],

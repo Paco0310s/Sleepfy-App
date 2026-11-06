@@ -85,59 +85,53 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Verificar Correo'),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: Constants.kSurfaceColor,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Constants.kBorderColor, width: 1.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+                color: Constants.surface(context),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Constants.border(context), width: 1.2),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Constants.kPrimaryColor.withValues(alpha: 0.18),
+                      color: Constants.surfaceLight(context),
                       shape: BoxShape.circle,
+                      border: Border.all(color: Constants.border(context)),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.mark_email_read_outlined,
-                      size: 46,
-                      color: Constants.kSecondaryColor,
+                      size: 38,
+                      color: Constants.accent(context),
                     ),
                   ),
-                  const Gap(18),
-                  const MyText(
+                  const Gap(16),
+                  MyText(
                     'Confirma tu correo electrónico',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Constants.kTextColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Constants.textPrimary(context),
                     textAlign: TextAlign.center,
                   ),
-                  const Gap(8),
+                  const Gap(6),
                   MyText(
                     'Enviamos un código de verificación de 6 dígitos a:\n${widget.email}',
-                    fontSize: 13.5,
-                    color: Constants.kTextSecondaryColor,
+                    fontSize: 13,
+                    color: Constants.textSecondary(context),
                     textAlign: TextAlign.center,
                   ),
-                  const Gap(24),
+                  const Gap(22),
 
                   // Input de 6 dígitos estilizado
                   TextField(
@@ -146,53 +140,53 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     textAlign: TextAlign.center,
                     maxLength: 6,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: const TextStyle(
-                      color: Constants.kSecondaryColor,
-                      fontSize: 28,
+                    style: TextStyle(
+                      color: Constants.textPrimary(context),
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 10,
+                      letterSpacing: 8,
                     ),
                     decoration: InputDecoration(
                       counterText: '',
                       hintText: '000000',
                       hintStyle: TextStyle(
-                        color: Constants.kTextSecondaryColor.withValues(alpha: 0.35),
-                        fontSize: 28,
-                        letterSpacing: 10,
+                        color: Constants.textSecondary(context).withValues(alpha: 0.35),
+                        fontSize: 26,
+                        letterSpacing: 8,
                       ),
                       filled: true,
-                      fillColor: Constants.kBackgroundColor,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      fillColor: Constants.surfaceLight(context),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Constants.kBorderColor),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: Constants.border(context)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Constants.kBorderColor),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: Constants.border(context)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Constants.kSecondaryColor, width: 1.8),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: Constants.accent(context), width: 1.5),
                       ),
                     ),
                     onSubmitted: (_) => _onVerify(),
                   ),
-                  const Gap(24),
+                  const Gap(22),
 
                   MyButton(
-                    color: Constants.kPrimaryColor,
                     text: 'Verificar y continuar',
                     onPressed: _onVerify,
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.verified_rounded, color: Colors.white, size: 20),
-                        Gap(8),
+                        Icon(Icons.verified_rounded, color: Constants.primaryContent(context), size: 19),
+                        const Gap(8),
                         MyText(
                           'Verificar y continuar',
-                          color: Colors.white,
+                          color: Constants.primaryContent(context),
                           fontWeight: FontWeight.w600,
+                          fontSize: 14.5,
                         ),
                       ],
                     ),
@@ -203,29 +197,29 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     onPressed: _resendCooldown > 0 ? null : _onResend,
                     icon: Icon(
                       Icons.refresh_rounded,
-                      size: 18,
+                      size: 16,
                       color: _resendCooldown > 0
-                          ? Constants.kTextSecondaryColor.withValues(alpha: 0.5)
-                          : Constants.kSecondaryColor,
+                          ? Constants.textSecondary(context).withValues(alpha: 0.5)
+                          : Constants.accent(context),
                     ),
                     label: MyText(
                       _resendCooldown > 0
                           ? 'Reenviar código en ${_resendCooldown}s'
                           : '¿No recibiste el código? Reenviar ahora',
-                      fontSize: 13,
+                      fontSize: 12.5,
                       color: _resendCooldown > 0
-                          ? Constants.kTextSecondaryColor
-                          : Constants.kSecondaryColor,
+                          ? Constants.textSecondary(context)
+                          : Constants.accent(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const Gap(6),
+                  const Gap(4),
                   TextButton(
                     onPressed: () => Get.back(),
-                    child: const MyText(
+                    child: MyText(
                       'Volver al inicio de sesión',
-                      fontSize: 12.5,
-                      color: Constants.kTextSecondaryColor,
+                      fontSize: 12,
+                      color: Constants.textSecondary(context),
                     ),
                   ),
                 ],

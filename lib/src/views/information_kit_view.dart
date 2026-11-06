@@ -52,7 +52,7 @@ class InformationKitView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Kit Sleepfy de Relajación'),
       ),
@@ -69,23 +69,23 @@ class InformationKitView extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Constants.kSurfaceColor,
-              border: Border(top: BorderSide(color: Constants.kBorderColor)),
+            decoration: BoxDecoration(
+              color: Constants.surface(context),
+              border: Border(top: BorderSide(color: Constants.border(context))),
             ),
             child: SafeArea(
               child: MyButton(
-                color: Constants.kSecondaryColor,
                 text: 'Adquirir mi Kit Sleepfy',
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.shopping_bag_outlined, color: Constants.kBackgroundColor, size: 20),
-                    Gap(8),
+                    Icon(Icons.shopping_bag_outlined, color: Constants.primaryContent(context), size: 19),
+                    const Gap(8),
                     MyText(
                       'Adquirir mi Kit Sleepfy',
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kBackgroundColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.5,
+                      color: Constants.primaryContent(context),
                     ),
                   ],
                 ),
@@ -98,10 +98,10 @@ class InformationKitView extends StatelessWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        backgroundColor: Constants.kSurfaceColor,
+                        backgroundColor: Constants.surface(context),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Constants.kBorderColor),
+                          borderRadius: BorderRadius.circular(18),
+                          side: BorderSide(color: Constants.border(context)),
                         ),
                         title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
                         content: const Wrap(
@@ -147,50 +147,43 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Constants.kSurfaceColor,
+        color: Constants.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Constants.kBorderColor, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: Constants.border(context)),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+            color: Constants.surfaceLight(context),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
             Icons.spa_outlined,
-            color: Constants.kSecondaryColor,
-            size: 22,
+            color: Constants.kSageGreen,
+            size: 21,
           ),
         ),
         title: MyText(
           product["title"]!,
-          fontWeight: FontWeight.bold,
-          fontSize: 15.5,
-          color: Constants.kTextColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 14.5,
+          color: Constants.textPrimary(context),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: 2),
           child: MyText(
             product["description"]!,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            fontSize: 12.5,
-            color: Constants.kTextSecondaryColor,
+            fontSize: 12,
+            color: Constants.textSecondary(context),
           ),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded, color: Constants.kSecondaryColor),
+        trailing: Icon(Icons.chevron_right_rounded, color: Constants.textSecondary(context), size: 20),
         onTap: () {
           Get.to(() => ProductDetailScreen(product: product));
         },
@@ -207,7 +200,7 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: MyTitleAppBar(title: product["title"]!),
       ),
@@ -219,35 +212,39 @@ class ProductDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Constants.kSurfaceColor,
+                color: Constants.surface(context),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Constants.kBorderColor),
+                border: Border.all(color: Constants.border(context)),
               ),
               child: MyText(
                 product["description"]!,
-                fontSize: 15,
-                color: Constants.kTextColor,
+                fontSize: 14,
+                color: Constants.textPrimary(context),
+                height: 1.5,
               ),
             ),
-            const Gap(18),
+            const Gap(16),
             _buildDetailSection(
+              context,
               title: 'Beneficios',
               icon: Icons.check_circle_outline_rounded,
-              iconColor: Constants.kMintColor,
+              iconColor: Constants.kSageGreen,
               content: product["benefits"]!,
             ),
-            const Gap(14),
+            const Gap(12),
             _buildDetailSection(
-              title: 'Modo de Uso',
-              icon: Icons.lightbulb_outline_rounded,
-              iconColor: Constants.kSecondaryColor,
+              context,
+              title: 'Modo de uso',
+              icon: Icons.touch_app_outlined,
+              iconColor: Constants.accent(context),
               content: product["usage"]!,
             ),
-            const Gap(14),
+            const Gap(12),
             _buildDetailSection(
-              title: 'Advertencias',
-              icon: Icons.warning_amber_rounded,
-              iconColor: const Color(0xFFF59E0B),
+              context,
+              title: 'Precauciones',
+              icon: Icons.info_outline_rounded,
+              iconColor: const Color(0xFFD49E3D),
               content: product["warning"]!,
             ),
           ],
@@ -256,39 +253,41 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailSection({
+  Widget _buildDetailSection(
+    BuildContext context, {
     required String title,
     required IconData icon,
     required Color iconColor,
     required String content,
   }) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Constants.kSurfaceColor,
+        color: Constants.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Constants.kBorderColor),
+        border: Border.all(color: Constants.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: 20),
-              const Gap(10),
+              Icon(icon, color: iconColor, size: 18),
+              const Gap(8),
               MyText(
                 title,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: iconColor,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: Constants.textPrimary(context),
               ),
             ],
           ),
-          const Gap(10),
+          const Gap(8),
           MyText(
             content,
-            fontSize: 14,
-            color: Constants.kTextColor,
+            fontSize: 13,
+            color: Constants.textSecondary(context),
+            height: 1.45,
           ),
         ],
       ),

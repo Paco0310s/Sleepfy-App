@@ -116,4 +116,11 @@ class UserPreferences {
     final todayStr = '${now.year}-${now.month}-${now.day}';
     return morningMoodDate == todayStr && morningMood != null;
   }
+
+  // Tema Claro / Oscuro (por defecto modo oscuro Slate)
+  static bool get isDarkMode => _preferences.getBool('is_dark_mode') ?? true;
+
+  static Future<void> setIsDarkMode(bool isDark) async {
+    await _preferences.setBool('is_dark_mode', isDark);
+  }
 }

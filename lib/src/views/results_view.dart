@@ -30,13 +30,13 @@ class ResultsView extends StatelessWidget {
     final routine = testProvider.routine;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Tu Rutina de Descanso'),
         actions: [
           if (routine != null)
             IconButton(
-              icon: const Icon(Icons.copy_rounded, color: Constants.kSecondaryColor),
+              icon: Icon(Icons.copy_rounded, color: Constants.textPrimary(context), size: 20),
               tooltip: 'Copiar rutina',
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: routine));
@@ -44,12 +44,12 @@ class ResultsView extends StatelessWidget {
               },
             ),
           IconButton(
-            icon: const Icon(Icons.history_rounded, color: Constants.kSecondaryColor),
+            icon: Icon(Icons.history_rounded, color: Constants.textPrimary(context), size: 20),
             tooltip: 'Historial de rutinas',
             onPressed: () => _showHistoryModal(context, testProvider),
           ),
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Constants.kSecondaryColor),
+            icon: Icon(Icons.refresh_rounded, color: Constants.textPrimary(context), size: 20),
             tooltip: 'Sincronizar rutina',
             onPressed: () => testProvider.refreshRoutine(),
           ),
@@ -57,15 +57,15 @@ class ResultsView extends StatelessWidget {
       ),
       body: Builder(builder: (context) {
         if (testProvider.isLoading) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: Constants.kPrimaryColor),
-                Gap(16),
+                CircularProgressIndicator(color: Constants.accent(context)),
+                const Gap(16),
                 MyText(
                   'Cargando tu rutina...',
-                  color: Constants.kTextSecondaryColor,
+                  color: Constants.textSecondary(context),
                   fontSize: 14,
                 ),
               ],
@@ -80,20 +80,20 @@ class ResultsView extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.bedtime_off_outlined, size: 60, color: Constants.kTextSecondaryColor.withValues(alpha: 0.5)),
+                  Icon(Icons.bedtime_off_outlined, size: 54, color: Constants.textSecondary(context).withValues(alpha: 0.5)),
                   const Gap(16),
-                  const MyText(
+                  MyText(
                     'No se encontró una rutina guardada',
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Constants.kTextColor,
+                    fontWeight: FontWeight.w600,
+                    color: Constants.textPrimary(context),
                     textAlign: TextAlign.center,
                   ),
                   const Gap(8),
-                  const MyText(
+                  MyText(
                     'Completa el cuestionario de análisis para generar tu primera rutina personalizada.',
                     fontSize: 13,
-                    color: Constants.kTextSecondaryColor,
+                    color: Constants.textSecondary(context),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -109,21 +109,21 @@ class ResultsView extends StatelessWidget {
             children: [
               // Badge de IA
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Constants.kPrimaryColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+                  color: Constants.surface(context),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Constants.border(context)),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.auto_awesome, color: Constants.kSecondaryColor, size: 18),
-                    Gap(8),
+                    Icon(Icons.auto_awesome, color: Constants.accent(context), size: 17),
+                    const Gap(10),
                     Expanded(
                       child: MyText(
-                        'Generada por Sleepfy AI basándose en tu cuestionario',
-                        color: Constants.kSecondaryColor,
+                        'Rutina generada por Sleepfy AI basándose en tu perfil de descanso',
+                        color: Constants.textPrimary(context),
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500,
                       ),
@@ -143,15 +143,15 @@ class ResultsView extends StatelessWidget {
                       Row(
                         children: [
                           Icon(
-                            testProvider.isOffline ? Icons.cloud_off_rounded : Icons.offline_pin_rounded,
-                            size: 15,
-                            color: testProvider.isOffline ? Constants.kWarningColor : Constants.kSuccessColor,
+                            testProvider.isOffline ? Icons.cloud_off_rounded : Icons.check_circle_outline_rounded,
+                            size: 14,
+                            color: testProvider.isOffline ? const Color(0xFFD49E3D) : Constants.kSageGreen,
                           ),
                           const Gap(6),
                           MyText(
                             testProvider.isOffline ? 'Modo Offline (Copia Local)' : 'Disponible sin conexión',
                             fontSize: 11.5,
-                            color: testProvider.isOffline ? Constants.kWarningColor : Constants.kSuccessColor,
+                            color: testProvider.isOffline ? const Color(0xFFD49E3D) : Constants.kSageGreen,
                             fontWeight: FontWeight.w500,
                           ),
                         ],
@@ -159,7 +159,7 @@ class ResultsView extends StatelessWidget {
                       MyText(
                         'Actualizado: ${_formatDate(testProvider.cachedRoutineDate)}',
                         fontSize: 11,
-                        color: Constants.kTextSecondaryColor,
+                        color: Constants.textSecondary(context),
                       ),
                     ],
                   ),
@@ -171,123 +171,126 @@ class ResultsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Constants.kSurfaceColor,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Constants.kBorderColor, width: 1.2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+                  color: Constants.surface(context),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: Constants.border(context), width: 1.2),
                 ),
                 child: MarkdownBody(
                   data: routine,
                   selectable: true,
                   styleSheet: MarkdownStyleSheet(
-                    p: const TextStyle(
-                      color: Constants.kTextColor,
-                      fontSize: 14.5,
+                    p: TextStyle(
+                      color: Constants.textPrimary(context),
+                      fontSize: 14,
                       height: 1.55,
                     ),
-                    h1: const TextStyle(
-                      color: Constants.kSecondaryColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      height: 1.4,
-                    ),
-                    h2: const TextStyle(
-                      color: Constants.kSecondaryColor,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      height: 1.4,
-                    ),
-                    h3: const TextStyle(
-                      color: Constants.kTextColor,
-                      fontSize: 15,
+                    h1: TextStyle(
+                      color: Constants.textPrimary(context),
+                      fontSize: 19,
                       fontWeight: FontWeight.w600,
                       height: 1.4,
                     ),
-                    strong: const TextStyle(
-                      color: Constants.kTextColor,
+                    h2: TextStyle(
+                      color: Constants.textPrimary(context),
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+                    h3: TextStyle(
+                      color: Constants.textPrimary(context),
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+                    strong: TextStyle(
+                      color: Constants.textPrimary(context),
                       fontWeight: FontWeight.bold,
                     ),
-                    em: const TextStyle(
-                      color: Constants.kTextSecondaryColor,
+                    em: TextStyle(
+                      color: Constants.textSecondary(context),
                       fontStyle: FontStyle.italic,
                     ),
-                    listBullet: const TextStyle(
-                      color: Constants.kSecondaryColor,
+                    listBullet: TextStyle(
+                      color: Constants.accent(context),
                       fontSize: 14,
                     ),
-                    blockquote: const TextStyle(
-                      color: Constants.kTextSecondaryColor,
-                      fontSize: 14,
+                    blockquote: TextStyle(
+                      color: Constants.textSecondary(context),
+                      fontSize: 13.5,
                     ),
                     blockquoteDecoration: BoxDecoration(
-                      color: Constants.kSurfaceLightColor,
+                      color: Constants.surfaceLight(context),
                       borderRadius: BorderRadius.circular(8),
-                      border: const Border(
-                        left: BorderSide(color: Constants.kSecondaryColor, width: 4),
+                      border: Border(
+                        left: BorderSide(color: Constants.accent(context), width: 3.5),
                       ),
                     ),
                   ),
                 ),
               ),
-              const Gap(16),
+              const Gap(14),
 
               // Botón para consultar a Sleepfy AI sobre la rutina
               Container(
                 decoration: BoxDecoration(
+                  color: Constants.surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.6)),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1E1B4B), Color(0xFF1E293B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.auto_awesome, color: Constants.kSecondaryColor, size: 26),
-                  title: const MyText(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Constants.surfaceLight(context),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.auto_awesome, color: Constants.accent(context), size: 20),
+                  ),
+                  title: MyText(
                     '¿Tienes dudas sobre tu rutina o no puedes dormir?',
-                    color: Constants.kTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    color: Constants.textPrimary(context),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.5,
                   ),
-                  subtitle: const MyText(
-                    'Chatea en vivo con Sleepfy AI para recibir guía personalizada ahora mismo',
-                    color: Constants.kTextSecondaryColor,
-                    fontSize: 12,
+                  subtitle: MyText(
+                    'Chatea con Sleepfy AI para recibir guía personalizada al instante',
+                    color: Constants.textSecondary(context),
+                    fontSize: 11.5,
                   ),
-                  trailing: const Icon(Icons.chat_bubble_outline_rounded, color: Constants.kSecondaryColor, size: 18),
+                  trailing: Icon(Icons.chevron_right_rounded, color: Constants.textSecondary(context)),
                   onTap: () => Get.to(() => const AiChatView()),
                 ),
               ),
-              const Gap(12),
+              const Gap(10),
 
               // Botón de reevaluación
               Container(
                 decoration: BoxDecoration(
+                  color: Constants.surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Constants.kSecondaryColor.withValues(alpha: 0.5)),
-                  color: Constants.kSecondaryColor.withValues(alpha: 0.08),
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.edit_note_rounded, color: Constants.kSecondaryColor, size: 28),
-                  title: const MyText(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Constants.surfaceLight(context),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.refresh_rounded, color: Constants.textSecondary(context), size: 20),
+                  ),
+                  title: MyText(
                     '¿Cambiaron tus hábitos de descanso?',
-                    color: Constants.kTextColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    color: Constants.textPrimary(context),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.5,
                   ),
-                  subtitle: const MyText(
+                  subtitle: MyText(
                     'Reevalúa tus respuestas para que la IA adapte tu rutina a tus avances',
-                    color: Constants.kTextSecondaryColor,
-                    fontSize: 12,
+                    color: Constants.textSecondary(context),
+                    fontSize: 11.5,
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Constants.kSecondaryColor, size: 16),
+                  trailing: Icon(Icons.chevron_right_rounded, color: Constants.textSecondary(context)),
                   onTap: () => testProvider.startRetake(),
                 ),
               ),
@@ -302,9 +305,9 @@ class ResultsView extends StatelessWidget {
   void _showHistoryModal(BuildContext context, TestProvider provider) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Constants.kSurfaceColor,
+      backgroundColor: Constants.surface(context),
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       builder: (context) {
         final history = provider.routineHistory;
@@ -318,42 +321,42 @@ class ResultsView extends StatelessWidget {
               children: [
                 Center(
                   child: Container(
-                    width: 40,
+                    width: 38,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Constants.kBorderColor,
+                      color: Constants.border(context),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
                 const Gap(16),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.history_rounded, color: Constants.kSecondaryColor, size: 22),
-                    Gap(10),
+                    Icon(Icons.history_rounded, color: Constants.accent(context), size: 20),
+                    const Gap(10),
                     MyText(
-                      'Historial de Rutinas y Avances',
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kTextColor,
+                      'Historial de Rutinas',
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
                     ),
                   ],
                 ),
-                const Gap(6),
-                const MyText(
+                const Gap(4),
+                MyText(
                   'Consulta tus versiones anteriores de descanso generadas por la IA',
-                  fontSize: 12.5,
-                  color: Constants.kTextSecondaryColor,
+                  fontSize: 12,
+                  color: Constants.textSecondary(context),
                 ),
                 const Gap(16),
                 if (history.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(24),
                     alignment: Alignment.center,
-                    child: const MyText(
+                    child: MyText(
                       'Esta es tu primera rutina. Al reevaluar tus respuestas podrás ver la evolución aquí.',
-                      color: Constants.kTextSecondaryColor,
-                      fontSize: 13,
+                      color: Constants.textSecondary(context),
+                      fontSize: 12.5,
                       textAlign: TextAlign.center,
                     ),
                   )
@@ -362,7 +365,7 @@ class ResultsView extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: history.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, __) => Divider(height: 1, color: Constants.border(context)),
                       itemBuilder: (context, index) {
                         final item = history[index];
                         final isLatest = index == 0;
@@ -371,46 +374,46 @@ class ResultsView extends StatelessWidget {
                             : 'Versión ${history.length - index}';
 
                         return ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: (isLatest ? Constants.kPrimaryColor : Constants.kSurfaceLightColor).withValues(alpha: 0.2),
+                              color: Constants.surfaceLight(context),
                             ),
                             child: Icon(
                               isLatest ? Icons.auto_awesome : Icons.check_circle_outline_rounded,
-                              size: 18,
-                              color: isLatest ? Constants.kSecondaryColor : Constants.kTextSecondaryColor,
+                              size: 16,
+                              color: isLatest ? Constants.accent(context) : Constants.textSecondary(context),
                             ),
                           ),
                           title: Row(
                             children: [
                               MyText(
                                 'Rutina del $dateStr',
-                                fontWeight: isLatest ? FontWeight.bold : FontWeight.w500,
-                                fontSize: 14,
-                                color: Constants.kTextColor,
+                                fontWeight: isLatest ? FontWeight.w600 : FontWeight.w500,
+                                fontSize: 13.5,
+                                color: Constants.textPrimary(context),
                               ),
                               if (isLatest) ...[
                                 const Gap(8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Constants.kMintColor.withValues(alpha: 0.2),
+                                    color: Constants.kSageGreen.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: const MyText(
                                     'ACTUAL',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Constants.kMintColor,
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: Constants.kSageGreen,
                                   ),
                                 ),
                               ],
                             ],
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Constants.kTextSecondaryColor),
+                          trailing: Icon(Icons.arrow_forward_ios_rounded, size: 13, color: Constants.textSecondary(context)),
                           onTap: () {
                             provider.viewRoutineFromHistory(item);
                             Navigator.pop(context);

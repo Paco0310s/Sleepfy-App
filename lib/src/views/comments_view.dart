@@ -43,7 +43,7 @@ class CommentsViewState extends State<CommentsView> {
     final int myUserId = UserPreferences.id ?? -1;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Comunidad de Sueño'),
       ),
@@ -52,27 +52,28 @@ class CommentsViewState extends State<CommentsView> {
           Expanded(
             child: Builder(builder: (context) {
               if (commentsProvider.loadingGetMsgs) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Constants.kPrimaryColor),
+                return Center(
+                  child: CircularProgressIndicator(color: Constants.accent(context)),
                 );
               }
 
               if (comments.isEmpty) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.chat_bubble_outline_rounded, size: 50, color: Constants.kTextSecondaryColor),
-                      Gap(12),
+                      Icon(Icons.chat_bubble_outline_rounded, size: 48, color: Constants.textSecondary(context)),
+                      const Gap(12),
                       MyText(
                         'Aún no hay comentarios',
-                        color: Constants.kTextSecondaryColor,
+                        color: Constants.textPrimary(context),
+                        fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
-                      Gap(4),
+                      const Gap(4),
                       MyText(
                         '¡Sé el primero en compartir tu experiencia de descanso!',
-                        color: Constants.kTextSecondaryColor,
+                        color: Constants.textSecondary(context),
                         fontSize: 13,
                       ),
                     ],
@@ -94,12 +95,12 @@ class CommentsViewState extends State<CommentsView> {
                       constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * 0.78,
                       ),
-                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: isMine
-                            ? const Color(0xFF312E81)
-                            : Constants.kSurfaceColor,
+                            ? Constants.primary(context)
+                            : Constants.surface(context),
                         borderRadius: BorderRadius.only(
                           topLeft: const Radius.circular(16),
                           topRight: const Radius.circular(16),
@@ -107,39 +108,31 @@ class CommentsViewState extends State<CommentsView> {
                           bottomRight: Radius.circular(isMine ? 4 : 16),
                         ),
                         border: Border.all(
-                          color: isMine
-                              ? Constants.kPrimaryColor.withValues(alpha: 0.5)
-                              : Constants.kBorderColor,
-                          width: 1,
+                          color: isMine ? Colors.transparent : Constants.border(context),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                         children: [
                           MyText(
                             isMine ? 'Tú' : '${comment.user.name} ${comment.user.lastName}',
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            color: isMine ? Constants.kSecondaryColor : Constants.kMintColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isMine ? Constants.primaryContent(context) : Constants.kSageGreen,
                           ),
-                          const Gap(5),
+                          const Gap(4),
                           MyText(
                             comment.comment,
-                            fontSize: 14,
-                            color: Constants.kTextColor,
+                            fontSize: 13.5,
+                            color: isMine ? Constants.primaryContent(context) : Constants.textPrimary(context),
                           ),
                           const Gap(6),
                           MyText(
                             ParseUtils.formatDate(comment.createdAt),
-                            fontSize: 10.5,
-                            color: Constants.kTextSecondaryColor,
+                            fontSize: 10,
+                            color: isMine
+                                ? Constants.primaryContent(context).withValues(alpha: 0.7)
+                                : Constants.textSecondary(context),
                             fontWeight: FontWeight.w500,
                           ),
                         ],
@@ -154,10 +147,10 @@ class CommentsViewState extends State<CommentsView> {
           // Barra inferior de envío
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: const BoxDecoration(
-              color: Constants.kSurfaceColor,
+            decoration: BoxDecoration(
+              color: Constants.surface(context),
               border: Border(
-                top: BorderSide(color: Constants.kBorderColor, width: 1),
+                top: BorderSide(color: Constants.border(context)),
               ),
             ),
             child: SafeArea(
@@ -172,20 +165,20 @@ class CommentsViewState extends State<CommentsView> {
                   const SizedBox(width: 10),
                   Builder(builder: (context) {
                     if (commentsProvider.loadingSendMsg) {
-                      return const SizedBox(
+                      return SizedBox(
                         width: 36,
                         height: 36,
                         child: Center(
                           child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(Constants.kSecondaryColor),
+                            strokeWidth: 2.2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Constants.accent(context)),
                           ),
                         ),
                       );
                     }
                     return Container(
-                      decoration: const BoxDecoration(
-                        color: Constants.kPrimaryColor,
+                      decoration: BoxDecoration(
+                        color: Constants.primary(context),
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
@@ -193,10 +186,10 @@ class CommentsViewState extends State<CommentsView> {
                           commentsProvider.addComment();
                           _scrollToBottom();
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_upward_rounded,
-                          size: 22,
-                          color: Colors.white,
+                          size: 20,
+                          color: Constants.primaryContent(context),
                         ),
                       ),
                     );

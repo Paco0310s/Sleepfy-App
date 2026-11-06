@@ -19,7 +19,7 @@ class ToolsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Herramientas de Descanso'),
       ),
@@ -28,63 +28,63 @@ class ToolsView extends StatelessWidget {
         children: [
           _ToolCardItem(
             icon: Icons.auto_awesome,
-            iconColor: const Color(0xFFA78BFA),
+            iconColor: Constants.accent(context),
             title: 'Sleepfy AI Coach (Chat en Vivo)',
             subtitle: 'Habla con nuestra IA sobre tu rutina o si no puedes dormir hoy',
             onTap: () => Get.to(() => const AiChatView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.calculate_outlined,
-            iconColor: Constants.kSecondaryColor,
+            iconColor: Constants.accent(context),
             title: 'Calculadora de Ciclos (90 min)',
             subtitle: 'Calcula a qué hora acostarte para despertar sin fatiga',
             onTap: () => Get.to(() => const SleepCalculatorView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.air_rounded,
-            iconColor: Constants.kMintColor,
+            iconColor: Constants.kSageGreen,
             title: 'Respiración Guiada 4-7-8',
             subtitle: 'Orbe visual interactivo para inducir el descanso',
             onTap: () => Get.to(() => const BreathingExerciseView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
-            icon: Icons.menu_book_rounded,
-            iconColor: const Color(0xFF818CF8),
+            icon: Icons.self_improvement_rounded,
+            iconColor: Constants.kSageGreen,
             title: 'Meditación y Relajación',
             subtitle: 'Ejercicios guiados para calmar la mente',
             onTap: () => Get.to(() => MeditationsView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.music_note_rounded,
-            iconColor: Constants.kPrimaryColor,
+            iconColor: Constants.accent(context),
             title: 'Música y Sonidos Relajantes',
             subtitle: 'Ruido blanco, melodías y frecuencias delta',
             onTap: () => Get.to(() => const MusicView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.headphones_rounded,
-            iconColor: const Color(0xFF38BDF8),
+            iconColor: Constants.accent(context),
             title: 'Podcasts de Relajación',
             subtitle: 'Historias de sueño y reflexiones nocturnas',
             onTap: () => Get.to(() => PodcastsView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.emoji_events_outlined,
-            iconColor: Constants.kWarningColor,
+            iconColor: const Color(0xFFD49E3D),
             title: 'Desafíos y Logros de Sueño',
             subtitle: 'Metas semanales para consolidar tu rutina',
             onTap: () => Get.to(() => const ChallengesView()),
           ),
-          const Gap(12),
+          const Gap(10),
           _ToolCardItem(
             icon: Icons.bedtime_outlined,
-            iconColor: const Color(0xFFF472B6),
+            iconColor: Constants.kSageGreen,
             title: 'Control de Ciclos de Sueño',
             subtitle: 'Registra tus horarios de dormir y despertar',
             onTap: () => Get.to(() => const ControlDreamsView()),
@@ -116,28 +116,21 @@ class _ToolCardItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Constants.kSurfaceColor,
+          color: Constants.surface(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Constants.kBorderColor, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: Constants.border(context), width: 1),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(14),
+                color: iconColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: iconColor, size: 22),
+              child: Icon(icon, color: iconColor, size: 21),
             ),
             const Gap(14),
             Expanded(
@@ -146,23 +139,23 @@ class _ToolCardItem extends StatelessWidget {
                 children: [
                   MyText(
                     title,
-                    fontSize: 15.5,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w600,
-                    color: Constants.kTextColor,
+                    color: Constants.textPrimary(context),
                   ),
-                  const Gap(3),
+                  const Gap(2),
                   MyText(
                     subtitle,
-                    fontSize: 12.5,
-                    color: Constants.kTextSecondaryColor,
+                    fontSize: 12,
+                    color: Constants.textSecondary(context),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
-              color: Constants.kTextSecondaryColor,
-              size: 22,
+              color: Constants.textSecondary(context).withValues(alpha: 0.6),
+              size: 20,
             ),
           ],
         ),

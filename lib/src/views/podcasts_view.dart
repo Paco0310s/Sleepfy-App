@@ -41,7 +41,7 @@ class PodcastsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Podcasts de Relajación'),
       ),
@@ -52,65 +52,55 @@ class PodcastsView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF1E1B4B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Constants.surface(context),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Constants.kPrimaryColor.withValues(alpha: 0.3)),
+              border: Border.all(color: Constants.border(context)),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.mic_none_rounded, color: Constants.kSecondaryColor, size: 24),
-                    Gap(10),
+                    Icon(Icons.mic_none_rounded, color: Constants.accent(context), size: 22),
+                    const Gap(10),
                     MyText(
                       'Narrativa y Calma Auditiva',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Constants.kTextColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
                     ),
                   ],
                 ),
-                Gap(10),
+                const Gap(8),
                 MyText(
                   'Escuchar voces suaves y narraciones tranquilizadoras ayuda al cerebro a detener el monólogo interno de preocupaciones y facilitar la somnolencia natural.',
-                  fontSize: 13.5,
-                  color: Constants.kTextSecondaryColor,
+                  fontSize: 13,
+                  color: Constants.textSecondary(context),
+                  height: 1.45,
                 ),
               ],
             ),
           ),
-          const Gap(22),
+          const Gap(20),
 
-          const Padding(
-            padding: EdgeInsets.only(left: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
             child: MyText(
               'Podcasts seleccionados',
-              fontSize: 16.5,
-              fontWeight: FontWeight.bold,
-              color: Constants.kTextColor,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w600,
+              color: Constants.textPrimary(context),
             ),
           ),
           const Gap(12),
 
           ...podcastList.map((item) {
             return Container(
-              margin: const EdgeInsets.only(bottom: 14),
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Constants.kSurfaceColor,
+                color: Constants.surface(context),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Constants.kBorderColor),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                border: Border.all(color: Constants.border(context)),
               ),
               child: ListTile(
                 contentPadding: const EdgeInsets.all(16),
@@ -118,38 +108,37 @@ class PodcastsView extends StatelessWidget {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Constants.kMintColor.withValues(alpha: 0.15),
+                    color: Constants.surfaceLight(context),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.headphones_rounded,
-                    color: Constants.kMintColor,
-                    size: 24,
+                    color: Constants.kSageGreen,
+                    size: 22,
                   ),
                 ),
                 title: MyText(
                   item.title,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.5,
-                  color: Constants.kTextColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: Constants.textPrimary(context),
                 ),
                 subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 6),
+                  padding: const EdgeInsets.only(top: 4),
                   child: MyText(
                     item.description,
-                    fontSize: 13,
-                    color: Constants.kTextSecondaryColor,
+                    fontSize: 12.5,
+                    color: Constants.textSecondary(context),
                   ),
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.open_in_new_rounded,
-                  color: Constants.kSecondaryColor,
-                  size: 20,
+                  color: Constants.textSecondary(context),
+                  size: 18,
                 ),
               ),
             );
           }),
-          const Gap(20),
         ],
       ),
     );

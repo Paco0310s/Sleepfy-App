@@ -88,7 +88,6 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
       case BreathingPhase.hold:
         _secondsLeft = 7;
         _animController.duration = const Duration(seconds: 7);
-        // Se mantiene expandido
         break;
       case BreathingPhase.exhale:
         _secondsLeft = 8;
@@ -131,14 +130,14 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
     }
   }
 
-  Color get _phaseColor {
+  Color _getPhaseColor(BuildContext context) {
     switch (_phase) {
       case BreathingPhase.inhale:
-        return Constants.kMintColor;
+        return Constants.kSageGreen;
       case BreathingPhase.hold:
-        return const Color(0xFFFBBF24); // Oro / Ámbar
+        return const Color(0xFFD49E3D);
       case BreathingPhase.exhale:
-        return Constants.kSecondaryColor;
+        return Constants.accent(context);
     }
   }
 
@@ -166,8 +165,10 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
 
   @override
   Widget build(BuildContext context) {
+    final phaseColor = _getPhaseColor(context);
+
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Respiración 4-7-8'),
       ),
@@ -178,22 +179,22 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
             children: [
               // Indicador de ciclo
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                 decoration: BoxDecoration(
-                  color: Constants.kSurfaceColor,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Constants.kBorderColor),
+                  color: Constants.surface(context),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: Constants.border(context)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.air_rounded, color: _phaseColor, size: 18),
+                    Icon(Icons.air_rounded, color: phaseColor, size: 17),
                     const Gap(8),
                     MyText(
                       'Ciclo $_currentCycle de $_maxCycles',
-                      color: Constants.kTextColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
                     ),
                   ],
                 ),
@@ -204,11 +205,10 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
               AnimatedBuilder(
                 animation: _animController,
                 builder: (context, child) {
-                  // Tamaño base 160 -> se expande hasta 260
                   final double scale = _phase == BreathingPhase.hold
                       ? 1.0
                       : (_phase == BreathingPhase.inhale ? _animController.value : 1.0 - _animController.value);
-                  final double size = 160 + (scale * 100);
+                  final double size = 150 + (scale * 90);
 
                   return Center(
                     child: Container(
@@ -216,24 +216,11 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
                       height: size,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            _phaseColor.withValues(alpha: 0.35),
-                            _phaseColor.withValues(alpha: 0.1),
-                            Colors.transparent,
-                          ],
-                        ),
+                        color: phaseColor.withValues(alpha: 0.12),
                         border: Border.all(
-                          color: _phaseColor.withValues(alpha: 0.8),
-                          width: 2.5,
+                          color: phaseColor.withValues(alpha: 0.7),
+                          width: 2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _phaseColor.withValues(alpha: 0.35),
-                            blurRadius: 35,
-                            spreadRadius: 8,
-                          ),
-                        ],
                       ),
                       child: Center(
                         child: Column(
@@ -241,17 +228,18 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
                           children: [
                             MyText(
                               _isRunning ? '$_secondsLeft' : (_isFinished ? '✓' : '4-7-8'),
-                              fontSize: 48,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              fontSize: 44,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.textPrimary(context),
                             ),
                             if (_isRunning) ...[
                               const Gap(4),
                               MyText(
                                 _phaseTitle,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: _phaseColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.2,
+                                color: phaseColor,
                               ),
                             ],
                           ],
@@ -266,26 +254,26 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
 
               // Subtítulo instructivo
               if (_isFinished) ...[
-                const Icon(Icons.check_circle_rounded, color: Constants.kMintColor, size: 48),
+                const Icon(Icons.check_circle_outline_rounded, color: Constants.kSageGreen, size: 44),
                 const Gap(12),
-                const MyText(
+                MyText(
                   '¡Excelente trabajo!',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Constants.kTextColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Constants.textPrimary(context),
                 ),
                 const Gap(6),
-                const MyText(
+                MyText(
                   'Tu ritmo cardíaco se ha desacelerado. Ahora cierra los ojos y disponte a descansar.',
                   fontSize: 13,
-                  color: Constants.kTextSecondaryColor,
+                  color: Constants.textSecondary(context),
                   textAlign: TextAlign.center,
                 ),
               ] else ...[
                 MyText(
-                  _isRunning ? _phaseSubtitle : 'Técnica médica del Dr. Andrew Weil para reducir la ansiedad y dormir rápido.',
-                  fontSize: 14,
-                  color: Constants.kTextSecondaryColor,
+                  _isRunning ? _phaseSubtitle : 'Técnica médica del Dr. Andrew Weil para reducir la tensión y conciliar el sueño.',
+                  fontSize: 13.5,
+                  color: Constants.textSecondary(context),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -298,15 +286,15 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
                 children: [
                   if (_isRunning) ...[
                     IconButton(
-                      icon: const Icon(Icons.refresh_rounded, color: Constants.kTextSecondaryColor, size: 28),
+                      icon: Icon(Icons.refresh_rounded, color: Constants.textSecondary(context), size: 26),
                       tooltip: 'Reiniciar',
                       onPressed: _reset,
                     ),
-                    const Gap(16),
+                    const Gap(14),
                     Expanded(
                       child: MyButton(
+                        outlined: true,
                         text: 'Pausar',
-                        color: Constants.kSurfaceLightColor,
                         onPressed: _pause,
                       ),
                     ),
@@ -314,7 +302,6 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
                     Expanded(
                       child: MyButton(
                         text: _isFinished ? 'Repetir ejercicio' : (_animController.value > 0 ? 'Continuar' : 'Iniciar respiración'),
-                        color: Constants.kPrimaryColor,
                         onPressed: _start,
                       ),
                     ),
@@ -329,4 +316,3 @@ class _BreathingExerciseViewState extends State<BreathingExerciseView> with Sing
     );
   }
 }
-

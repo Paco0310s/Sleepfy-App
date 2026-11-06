@@ -51,8 +51,8 @@ class _AiChatViewState extends State<AiChatView> {
     _messages.add(
       _ChatMessage(
         role: 'model',
-        text: 'Hola$name 🌙 Soy **Sleepfy AI**, tu coach nocturno de descanso.\n\n'
-            'Conozco tu rutina personalizada y estoy aquí para ayudarte a relajar la mente, resolver dudas sobre tu sueño o guiarte paso a paso si te cuesta conciliar el sueño esta noche.\n\n'
+        text: 'Hola$name 🌙 Soy **Sleepfy AI**, tu coach de descanso.\n\n'
+            'Conozco tu rutina y estoy aquí para ayudarte a relajar la mente, resolver dudas sobre tu sueño o guiarte paso a paso si te cuesta conciliar el sueño esta noche.\n\n'
             '¿Cómo te sientes en este momento?',
       ),
     );
@@ -91,7 +91,6 @@ class _AiChatViewState extends State<AiChatView> {
       _inputController.clear();
     }
 
-    // Construir historial previo (excluyendo el mensaje de bienvenida inicial si se desea, o incluyéndolo)
     final history = _messages
         .skip(1)
         .map((m) => {'role': m.role, 'text': m.text})
@@ -143,7 +142,7 @@ class _AiChatViewState extends State<AiChatView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -151,13 +150,13 @@ class _AiChatViewState extends State<AiChatView> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Constants.kSecondaryColor.withValues(alpha: 0.15),
+                color: Constants.surfaceLight(context),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.auto_awesome,
-                color: Constants.kSecondaryColor,
-                size: 18,
+                color: Constants.accent(context),
+                size: 16,
               ),
             ),
             const Gap(8),
@@ -166,7 +165,7 @@ class _AiChatViewState extends State<AiChatView> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Constants.kTextSecondaryColor),
+            icon: Icon(Icons.refresh_rounded, color: Constants.textSecondary(context)),
             tooltip: 'Reiniciar conversación',
             onPressed: _clearChat,
           ),
@@ -177,27 +176,27 @@ class _AiChatViewState extends State<AiChatView> {
           // Banner sutil de contexto personalizado
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
             decoration: BoxDecoration(
-              color: Constants.kSurfaceColor,
+              color: Constants.surface(context),
               border: Border(
-                bottom: BorderSide(color: Constants.kBorderColor.withValues(alpha: 0.7)),
+                bottom: BorderSide(color: Constants.border(context)),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.verified_user_outlined,
-                  size: 14,
-                  color: Constants.kMintColor.withValues(alpha: 0.9),
+                  size: 13,
+                  color: Constants.kSageGreen,
                 ),
                 const Gap(6),
-                const Flexible(
+                Flexible(
                   child: MyText(
                     'Conectado con tu rutina personalizada de sueño',
                     fontSize: 11.5,
-                    color: Constants.kTextSecondaryColor,
+                    color: Constants.textSecondary(context),
                   ),
                 ),
               ],
@@ -228,7 +227,7 @@ class _AiChatViewState extends State<AiChatView> {
           // Sugerencias rápidas
           if (_messages.length <= 2 && !_isTyping)
             Container(
-              height: 46,
+              height: 42,
               margin: const EdgeInsets.only(bottom: 6),
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -238,20 +237,20 @@ class _AiChatViewState extends State<AiChatView> {
                 itemBuilder: (context, i) {
                   final prompt = _quickPrompts[i];
                   return ActionChip(
-                    backgroundColor: Constants.kSurfaceColor,
-                    side: BorderSide(color: Constants.kSecondaryColor.withValues(alpha: 0.35)),
+                    backgroundColor: Constants.surface(context),
+                    side: BorderSide(color: Constants.border(context)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    avatar: const Icon(
+                    avatar: Icon(
                       Icons.auto_awesome,
-                      size: 14,
-                      color: Constants.kSecondaryColor,
+                      size: 13,
+                      color: Constants.accent(context),
                     ),
                     label: MyText(
                       prompt,
-                      fontSize: 12,
-                      color: Constants.kTextColor,
+                      fontSize: 11.5,
+                      color: Constants.textPrimary(context),
                     ),
                     onPressed: () => _sendMessage(prompt),
                   );
@@ -262,10 +261,10 @@ class _AiChatViewState extends State<AiChatView> {
           // Barra de entrada inferior
           Container(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-            decoration: const BoxDecoration(
-              color: Constants.kSurfaceColor,
+            decoration: BoxDecoration(
+              color: Constants.surface(context),
               border: Border(
-                top: BorderSide(color: Constants.kBorderColor),
+                top: BorderSide(color: Constants.border(context)),
               ),
             ),
             child: SafeArea(
@@ -275,22 +274,22 @@ class _AiChatViewState extends State<AiChatView> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Constants.kBackgroundColor,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Constants.kBorderColor),
+                        color: Constants.surfaceLight(context),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: Constants.border(context)),
                       ),
                       child: TextField(
                         controller: _inputController,
-                        style: const TextStyle(color: Constants.kTextColor, fontSize: 14.5),
+                        style: TextStyle(color: Constants.textPrimary(context), fontSize: 14),
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _sendMessage(),
                         minLines: 1,
                         maxLines: 4,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Cuéntale a Sleepfy AI cómo te sientes...',
-                          hintStyle: TextStyle(color: Constants.kTextSecondaryColor, fontSize: 13.5),
+                          hintStyle: TextStyle(color: Constants.textSecondary(context), fontSize: 13),
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
                       ),
                     ),
@@ -298,34 +297,21 @@ class _AiChatViewState extends State<AiChatView> {
                   const Gap(10),
                   GestureDetector(
                     onTap: _isTyping ? null : () => _sendMessage(),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 46,
-                      height: 46,
+                    child: Container(
+                      width: 42,
+                      height: 42,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: _isTyping
-                            ? null
-                            : const LinearGradient(
-                                colors: [Constants.kPrimaryColor, Constants.kSecondaryColor],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                        color: _isTyping ? Constants.kSurfaceLightColor : null,
-                        boxShadow: _isTyping
-                            ? []
-                            : [
-                                BoxShadow(
-                                  color: Constants.kPrimaryColor.withValues(alpha: 0.35),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
+                        color: _isTyping
+                            ? Constants.surfaceLight(context)
+                            : Constants.primary(context),
                       ),
                       child: Icon(
                         _isTyping ? Icons.hourglass_top_rounded : Icons.send_rounded,
-                        color: Colors.white,
-                        size: 20,
+                        color: _isTyping
+                            ? Constants.textSecondary(context)
+                            : Constants.primaryContent(context),
+                        size: 18,
                       ),
                     ),
                   ),
@@ -353,7 +339,7 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,46 +347,36 @@ class _MessageBubble extends StatelessWidget {
           if (!isUser) ...[
             Container(
               margin: const EdgeInsets.only(top: 2),
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: Constants.kPrimaryColor.withValues(alpha: 0.2),
+                color: Constants.surfaceLight(context),
                 shape: BoxShape.circle,
-                border: Border.all(color: Constants.kSecondaryColor.withValues(alpha: 0.4)),
+                border: Border.all(color: Constants.border(context)),
               ),
-              child: const Icon(
-                Icons.nightlight_round,
-                color: Constants.kSecondaryColor,
-                size: 16,
+              child: Icon(
+                Icons.bedtime_outlined,
+                color: Constants.accent(context),
+                size: 15,
               ),
             ),
             const Gap(10),
           ],
           Flexible(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
               decoration: BoxDecoration(
-                gradient: isUser
-                    ? const LinearGradient(
-                        colors: [Constants.kPrimaryColor, Color(0xFF4F46E5)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                color: isUser ? null : Constants.kSurfaceColor,
+                color: isUser
+                    ? Constants.primary(context)
+                    : Constants.surface(context),
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(18),
-                  topRight: const Radius.circular(18),
-                  bottomLeft: Radius.circular(isUser ? 18 : 4),
-                  bottomRight: Radius.circular(isUser ? 4 : 18),
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isUser ? 16 : 4),
+                  bottomRight: Radius.circular(isUser ? 4 : 16),
                 ),
-                border: isUser ? null : Border.all(color: Constants.kBorderColor),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+                border: Border.all(
+                  color: isUser ? Colors.transparent : Constants.border(context),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,31 +384,31 @@ class _MessageBubble extends StatelessWidget {
                   if (isUser)
                     MyText(
                       message,
-                      color: Colors.white,
-                      fontSize: 14.5,
+                      color: Constants.primaryContent(context),
+                      fontSize: 14,
                     )
                   else
                     MarkdownBody(
                       data: message,
                       selectable: true,
                       styleSheet: MarkdownStyleSheet(
-                        p: const TextStyle(
-                          color: Constants.kTextColor,
-                          fontSize: 14,
-                          height: 1.48,
+                        p: TextStyle(
+                          color: Constants.textPrimary(context),
+                          fontSize: 13.5,
+                          height: 1.45,
                         ),
-                        strong: const TextStyle(
-                          color: Constants.kSecondaryColor,
-                          fontWeight: FontWeight.bold,
+                        strong: TextStyle(
+                          color: Constants.textPrimary(context),
+                          fontWeight: FontWeight.w600,
                         ),
-                        listBullet: const TextStyle(
-                          color: Constants.kSecondaryColor,
-                          fontSize: 14,
+                        listBullet: TextStyle(
+                          color: Constants.accent(context),
+                          fontSize: 13.5,
                         ),
-                        h3: const TextStyle(
-                          color: Constants.kSecondaryColor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                        h3: TextStyle(
+                          color: Constants.textPrimary(context),
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -441,10 +417,10 @@ class _MessageBubble extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: MyText(
                       time,
-                      fontSize: 10,
+                      fontSize: 9.5,
                       color: isUser
-                          ? Colors.white.withValues(alpha: 0.7)
-                          : Constants.kTextSecondaryColor,
+                          ? Constants.primaryContent(context).withValues(alpha: 0.7)
+                          : Constants.textSecondary(context),
                     ),
                   ),
                 ],
@@ -464,52 +440,52 @@ class _TypingIndicatorBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
-              color: Constants.kPrimaryColor.withValues(alpha: 0.2),
+              color: Constants.surfaceLight(context),
               shape: BoxShape.circle,
-              border: Border.all(color: Constants.kSecondaryColor.withValues(alpha: 0.4)),
+              border: Border.all(color: Constants.border(context)),
             ),
-            child: const Icon(
-              Icons.nightlight_round,
-              color: Constants.kSecondaryColor,
-              size: 16,
+            child: Icon(
+              Icons.bedtime_outlined,
+              color: Constants.accent(context),
+              size: 15,
             ),
           ),
           const Gap(10),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: Constants.kSurfaceColor,
+              color: Constants.surface(context),
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
                 bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(18),
+                bottomRight: Radius.circular(16),
               ),
-              border: Border.all(color: Constants.kBorderColor),
+              border: Border.all(color: Constants.border(context)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  width: 14,
-                  height: 14,
+                  width: 12,
+                  height: 12,
                   child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Constants.kSecondaryColor,
+                    strokeWidth: 1.8,
+                    color: Constants.accent(context),
                   ),
                 ),
-                Gap(10),
+                const Gap(8),
                 MyText(
                   'Sleepfy AI está escribiendo...',
-                  fontSize: 12.5,
-                  color: Constants.kTextSecondaryColor,
+                  fontSize: 12,
+                  color: Constants.textSecondary(context),
                 ),
               ],
             ),
@@ -519,4 +495,3 @@ class _TypingIndicatorBubble extends StatelessWidget {
     );
   }
 }
-

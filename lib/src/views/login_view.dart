@@ -14,30 +14,27 @@ class LoginView extends StatelessWidget {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       body: SafeArea(
         child: Form(
           key: userProvider.formKeyLogin,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // Logo con halo de luz
+                  // Logo limpio con sutil borde
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 90,
+                    height: 90,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Constants.kPrimaryColor.withValues(alpha: 0.3),
-                          blurRadius: 30,
-                          spreadRadius: 6,
-                        ),
-                      ],
+                      border: Border.all(
+                        color: Constants.border(context),
+                        width: 1.5,
+                      ),
                     ),
                     child: ClipOval(
                       child: Image.asset(
@@ -47,17 +44,18 @@ class LoginView extends StatelessWidget {
                     ),
                   ),
                   const Gap(16),
-                  const MyText(
+                  MyText(
                     'Sleepfy',
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Constants.kTextColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                    color: Constants.textPrimary(context),
                   ),
-                  const Gap(6),
-                  const MyText(
+                  const Gap(4),
+                  MyText(
                     'Bienvenido de nuevo a tu espacio de descanso',
-                    fontSize: 14,
-                    color: Constants.kTextSecondaryColor,
+                    fontSize: 13.5,
+                    color: Constants.textSecondary(context),
                     textAlign: TextAlign.center,
                   ),
                   const Gap(28),
@@ -66,51 +64,44 @@ class LoginView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Constants.kSurfaceColor,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Constants.kBorderColor, width: 1.2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                      color: Constants.surface(context),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: Constants.border(context), width: 1.2),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const MyText(
+                        MyText(
                           'Iniciar Sesión',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Constants.kTextColor,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Constants.textPrimary(context),
                         ),
-                        const Gap(6),
-                        const MyText(
+                        const Gap(4),
+                        MyText(
                           'Ingresa tus datos para continuar',
-                          fontSize: 13,
-                          color: Constants.kTextSecondaryColor,
+                          fontSize: 12.5,
+                          color: Constants.textSecondary(context),
                         ),
-                        const Gap(24),
+                        const Gap(22),
                         const EmailFieldItem(),
-                        const Gap(16),
+                        const Gap(14),
                         PasswordFieldItem(userProvider: userProvider),
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () => userProvider.toForgotPassword(),
-                            child: const MyText(
+                            child: MyText(
                               '¿Olvidaste tu contraseña?',
-                              fontSize: 13,
-                              color: Constants.kSecondaryColor,
+                              fontSize: 12.5,
+                              color: Constants.accent(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                        const Gap(14),
+                        const Gap(10),
                         LoginButton(userProvider: userProvider),
-                        const Gap(14),
+                        const Gap(12),
                         RegisterButton(userProvider: userProvider),
                       ],
                     ),
@@ -126,9 +117,7 @@ class LoginView extends StatelessWidget {
 }
 
 class EmailFieldItem extends StatelessWidget {
-  const EmailFieldItem({
-    super.key,
-  });
+  const EmailFieldItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -175,17 +164,17 @@ class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyButton(
-      color: Constants.kPrimaryColor,
       text: 'Iniciar sesión',
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.login_rounded, size: 20, color: Colors.white),
-          Gap(10),
+          Icon(Icons.login_rounded, size: 19, color: Constants.primaryContent(context)),
+          const Gap(8),
           MyText(
             'Iniciar sesión',
-            color: Colors.white,
+            color: Constants.primaryContent(context),
             fontWeight: FontWeight.w600,
+            fontSize: 14.5,
           ),
         ],
       ),
@@ -207,16 +196,17 @@ class RegisterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyButton(
-      color: Constants.kSurfaceLightColor,
+      outlined: true,
       text: 'Crear una cuenta',
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.person_add_alt_1_outlined, size: 20, color: Constants.kSecondaryColor),
-          Gap(10),
+          Icon(Icons.person_add_alt_1_outlined, size: 19, color: Constants.textPrimary(context)),
+          const Gap(8),
           MyText(
             'Crear una cuenta',
-            color: Constants.kTextColor,
+            color: Constants.textPrimary(context),
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ],

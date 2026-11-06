@@ -18,17 +18,17 @@ class TestView extends StatelessWidget {
     final TestProvider testProvider = Provider.of<TestProvider>(context);
 
     if (testProvider.isLoading) {
-      return const Scaffold(
-        backgroundColor: Constants.kBackgroundColor,
+      return Scaffold(
+        backgroundColor: Constants.background(context),
         body: Center(
-          child: CircularProgressIndicator(color: Constants.kPrimaryColor),
+          child: CircularProgressIndicator(color: Constants.accent(context)),
         ),
       );
     }
 
     if (testProvider.test == null) {
       return Scaffold(
-        backgroundColor: Constants.kBackgroundColor,
+        backgroundColor: Constants.background(context),
         appBar: AppBar(
           title: const MyTitleAppBar(title: 'Evaluación del Sueño'),
         ),
@@ -38,20 +38,20 @@ class TestView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.cloud_off_rounded, size: 54, color: Constants.kTextSecondaryColor),
+                Icon(Icons.cloud_off_rounded, size: 54, color: Constants.textSecondary(context)),
                 const Gap(16),
-                const MyText(
+                MyText(
                   'No se pudo cargar el cuestionario en este momento',
-                  color: Constants.kTextColor,
-                  fontWeight: FontWeight.bold,
+                  color: Constants.textPrimary(context),
+                  fontWeight: FontWeight.w600,
                   fontSize: 16,
                   textAlign: TextAlign.center,
                 ),
                 const Gap(8),
-                const MyText(
+                MyText(
                   'Verifica tu conexión a internet e inténtalo nuevamente.',
-                  color: Constants.kTextSecondaryColor,
-                  fontSize: 13.5,
+                  color: Constants.textSecondary(context),
+                  fontSize: 13,
                   textAlign: TextAlign.center,
                 ),
                 const Gap(20),
@@ -70,7 +70,7 @@ class TestView extends StatelessWidget {
 
     if (testFinished && !testProvider.isRetaking) {
       return Scaffold(
-        backgroundColor: Constants.kBackgroundColor,
+        backgroundColor: Constants.background(context),
         appBar: AppBar(
           title: const MyTitleAppBar(title: 'Cuestionario'),
         ),
@@ -85,43 +85,44 @@ class TestView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Constants.kMintColor.withValues(alpha: 0.15),
+                        color: Constants.kSageGreen.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.check_circle_rounded,
-                        size: 72,
-                        color: Constants.kMintColor,
+                        size: 64,
+                        color: Constants.kSageGreen,
                       ),
                     ),
-                    const Gap(24),
-                    const MyText(
+                    const Gap(22),
+                    MyText(
                       '¡Cuestionario Completado!',
-                      color: Constants.kTextColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                      color: Constants.textPrimary(context),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
                       textAlign: TextAlign.center,
                     ),
-                    const Gap(10),
-                    const MyText(
+                    const Gap(8),
+                    MyText(
                       'Tus respuestas han sido procesadas para generar tu rutina personalizada.',
-                      color: Constants.kTextSecondaryColor,
-                      fontSize: 14.5,
+                      color: Constants.textSecondary(context),
+                      fontSize: 13.5,
                       textAlign: TextAlign.center,
                     ),
                     const Gap(24),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Constants.kSecondaryColor,
-                        side: const BorderSide(color: Constants.kSecondaryColor),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        foregroundColor: Constants.textPrimary(context),
+                        side: BorderSide(color: Constants.border(context)),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: const MyText(
+                      icon: Icon(Icons.refresh_rounded, size: 17, color: Constants.textPrimary(context)),
+                      label: MyText(
                         'Actualizar mis respuestas',
-                        color: Constants.kSecondaryColor,
-                        fontWeight: FontWeight.w600,
+                        color: Constants.textPrimary(context),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.5,
                       ),
                       onPressed: () => testProvider.startRetake(),
                     ),
@@ -136,15 +137,16 @@ class TestView extends StatelessWidget {
               right: 20,
               child: MyButton(
                 text: 'Volver al inicio',
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.home_rounded, color: Colors.white),
-                    Gap(10),
+                    Icon(Icons.home_rounded, color: Constants.primaryContent(context), size: 19),
+                    const Gap(8),
                     MyText(
                       'Volver al inicio',
-                      color: Colors.white,
+                      color: Constants.primaryContent(context),
                       fontWeight: FontWeight.w600,
+                      fontSize: 14.5,
                     ),
                   ],
                 ),
@@ -158,27 +160,27 @@ class TestView extends StatelessWidget {
 
     final int totalQuestions = testProvider.test!.questions.length;
     if (testProvider.answers.length >= totalQuestions) {
-      return const Scaffold(
-        backgroundColor: Constants.kBackgroundColor,
+      return Scaffold(
+        backgroundColor: Constants.background(context),
         body: Center(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: Constants.kSecondaryColor),
-                Gap(20),
+                CircularProgressIndicator(color: Constants.accent(context)),
+                const Gap(20),
                 MyText(
                   'Sleepfy AI está diseñando tu rutina personalizada...',
-                  color: Constants.kTextColor,
-                  fontWeight: FontWeight.bold,
+                  color: Constants.textPrimary(context),
+                  fontWeight: FontWeight.w600,
                   fontSize: 16,
                   textAlign: TextAlign.center,
                 ),
-                Gap(8),
+                const Gap(8),
                 MyText(
                   'Analizando tus hábitos de sueño y respuestas clínicas',
-                  color: Constants.kTextSecondaryColor,
+                  color: Constants.textSecondary(context),
                   fontSize: 13,
                   textAlign: TextAlign.center,
                 ),
@@ -194,7 +196,7 @@ class TestView extends StatelessWidget {
     final double percentage = (currentQuestionIndex / totalQuestions) * 100;
 
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Evaluación del Sueño'),
       ),
@@ -208,11 +210,11 @@ class TestView extends StatelessWidget {
                 // Barra de progreso estilizada
                 LinearProgressBar(
                   maxSteps: 100,
-                  minHeight: 6,
+                  minHeight: 5,
                   progressType: LinearProgressBar.progressTypeLinear,
                   currentStep: percentage.toInt(),
-                  progressColor: Constants.kSecondaryColor,
-                  backgroundColor: Constants.kSurfaceLightColor,
+                  progressColor: Constants.accent(context),
+                  backgroundColor: Constants.surfaceLight(context),
                   borderRadius: BorderRadius.circular(0),
                 ),
                 Padding(
@@ -225,27 +227,27 @@ class TestView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                             decoration: BoxDecoration(
-                              color: Constants.kSurfaceLightColor,
+                              color: Constants.surface(context),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Constants.kBorderColor),
+                              border: Border.all(color: Constants.border(context)),
                             ),
                             child: MyText(
                               'Pregunta $currentQuestionIndex de $totalQuestions',
-                              color: Constants.kSecondaryColor,
+                              color: Constants.textPrimary(context),
                               fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                              fontSize: 12.5,
                             ),
                           ),
                           if (index > 0)
                             TextButton.icon(
                               onPressed: () => testProvider.previousQuestion(),
-                              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: Constants.kTextSecondaryColor),
-                              label: const MyText(
+                              icon: Icon(Icons.arrow_back_ios_new_rounded, size: 13, color: Constants.textSecondary(context)),
+                              label: MyText(
                                 'Pregunta anterior',
-                                fontSize: 12.5,
-                                color: Constants.kTextSecondaryColor,
+                                fontSize: 12,
+                                color: Constants.textSecondary(context),
                               ),
                             ),
                         ],
@@ -253,11 +255,11 @@ class TestView extends StatelessWidget {
                       const Gap(16),
                       MyText(
                         currentQuestion.question,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Constants.kTextColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: Constants.textPrimary(context),
                       ),
-                      const Gap(28),
+                      const Gap(24),
 
                       // Opciones de respuesta
                       ...testProvider.test!.questions[index].answersOptions.map(
@@ -265,47 +267,38 @@ class TestView extends StatelessWidget {
                           final bool isSelected = testProvider.selectedAnswer == answer;
 
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 14),
+                            padding: const EdgeInsets.only(bottom: 12),
                             child: InkWell(
                               onTap: () => testProvider.setSelectedAnswer(answer),
                               borderRadius: BorderRadius.circular(16),
                               child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                duration: const Duration(milliseconds: 180),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? Constants.kPrimaryColor.withValues(alpha: 0.18)
-                                      : Constants.kSurfaceColor,
+                                      ? Constants.surfaceLight(context)
+                                      : Constants.surface(context),
                                   border: Border.all(
-                                    color: isSelected ? Constants.kPrimaryColor : Constants.kBorderColor,
-                                    width: isSelected ? 1.8 : 1,
+                                    color: isSelected ? Constants.accent(context) : Constants.border(context),
+                                    width: isSelected ? 1.6 : 1,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: Constants.kPrimaryColor.withValues(alpha: 0.2),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ]
-                                      : null,
                                 ),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: MyText(
                                         answer.answer,
-                                        color: isSelected ? Constants.kTextColor : Constants.kTextSecondaryColor,
+                                        color: isSelected ? Constants.textPrimary(context) : Constants.textSecondary(context),
                                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                        fontSize: 15,
+                                        fontSize: 14.5,
                                       ),
                                     ),
                                     const Gap(12),
                                     Icon(
                                       isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                                      color: isSelected ? Constants.kSecondaryColor : Constants.kTextSecondaryColor,
-                                      size: 22,
+                                      color: isSelected ? Constants.accent(context) : Constants.textSecondary(context),
+                                      size: 20,
                                     ),
                                   ],
                                 ),
@@ -326,16 +319,17 @@ class TestView extends StatelessWidget {
             right: 20,
             child: MyButton(
               text: 'Siguiente',
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MyText(
                     'Siguiente',
-                    color: Colors.white,
+                    color: Constants.primaryContent(context),
                     fontWeight: FontWeight.w600,
+                    fontSize: 14.5,
                   ),
-                  Gap(8),
-                  Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                  const Gap(8),
+                  Icon(Icons.arrow_forward_rounded, color: Constants.primaryContent(context), size: 19),
                 ],
               ),
               onPressed: () {

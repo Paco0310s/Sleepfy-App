@@ -3,16 +3,14 @@ import 'package:sleepfy/src/utils/constants.dart';
 
 class MyTitleAppBar extends StatelessWidget {
   final String title;
+  final Color? color;
   final double fontSize;
-  final Color color;
-  final FontWeight fontWeight;
 
   const MyTitleAppBar({
     super.key,
     required this.title,
-    this.fontSize = 18,
-    this.color = Constants.kTextColor,
-    this.fontWeight = FontWeight.w600,
+    this.color,
+    this.fontSize = 17,
   });
 
   @override
@@ -21,9 +19,9 @@ class MyTitleAppBar extends StatelessWidget {
       title,
       style: TextStyle(
         fontSize: fontSize,
-        color: color,
-        fontWeight: fontWeight,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0.2,
+        color: color ?? Constants.textPrimary(context),
       ),
     );
   }

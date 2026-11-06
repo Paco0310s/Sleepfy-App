@@ -80,27 +80,20 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.kBackgroundColor,
+      backgroundColor: Constants.background(context),
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Recuperar Contraseña'),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: Constants.kSurfaceColor,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Constants.kBorderColor, width: 1.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+                color: Constants.surface(context),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Constants.border(context), width: 1.2),
               ),
               child: !_codeSent ? _buildStep1() : _buildStep2(),
             ),
@@ -120,34 +113,35 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         children: [
           Center(
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Constants.kPrimaryColor.withValues(alpha: 0.18),
+                color: Constants.surfaceLight(context),
                 shape: BoxShape.circle,
+                border: Border.all(color: Constants.border(context)),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.lock_reset_rounded,
-                size: 46,
-                color: Constants.kSecondaryColor,
+                size: 38,
+                color: Constants.accent(context),
               ),
             ),
           ),
-          const Gap(18),
-          const MyText(
+          const Gap(16),
+          MyText(
             '¿Olvidaste tu contraseña?',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Constants.textPrimary(context),
             textAlign: TextAlign.center,
           ),
-          const Gap(8),
-          const MyText(
+          const Gap(6),
+          MyText(
             'Ingresa el correo electrónico de tu cuenta y te enviaremos un código de 6 dígitos para restablecerla.',
-            fontSize: 13.5,
-            color: Constants.kTextSecondaryColor,
+            fontSize: 13,
+            color: Constants.textSecondary(context),
             textAlign: TextAlign.center,
           ),
-          const Gap(24),
+          const Gap(22),
           MyTextField(
             controller: _emailController,
             text: 'Correo electrónico',
@@ -155,20 +149,20 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             prefixIcon: const Icon(Icons.email_outlined),
             validator: (value) => Validations.validateEmail(value),
           ),
-          const Gap(24),
+          const Gap(22),
           MyButton(
-            color: Constants.kPrimaryColor,
             text: 'Enviar código a mi correo',
             onPressed: _sendRecoveryCode,
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.send_rounded, color: Colors.white, size: 18),
-                Gap(10),
+                Icon(Icons.send_rounded, color: Constants.primaryContent(context), size: 17),
+                const Gap(8),
                 MyText(
                   'Enviar código a mi correo',
-                  color: Colors.white,
+                  color: Constants.primaryContent(context),
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ],
             ),
@@ -190,29 +184,29 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Constants.kMintColor.withValues(alpha: 0.18),
+                color: Constants.kSageGreen.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.key_rounded,
-                size: 40,
-                color: Constants.kMintColor,
+                size: 36,
+                color: Constants.kSageGreen,
               ),
             ),
           ),
           const Gap(14),
-          const MyText(
+          MyText(
             'Crea tu nueva contraseña',
-            fontSize: 19,
-            fontWeight: FontWeight.bold,
-            color: Constants.kTextColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Constants.textPrimary(context),
             textAlign: TextAlign.center,
           ),
           const Gap(6),
           MyText(
             'Ingresa el código enviado a ${_emailController.text.trim()} y elige tu nueva contraseña.',
-            fontSize: 13,
-            color: Constants.kTextSecondaryColor,
+            fontSize: 12.5,
+            color: Constants.textSecondary(context),
             textAlign: TextAlign.center,
           ),
           const Gap(20),
@@ -224,38 +218,38 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             textAlign: TextAlign.center,
             maxLength: 6,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: const TextStyle(
-              color: Constants.kSecondaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 8,
+            style: TextStyle(
+              color: Constants.textPrimary(context),
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 6,
             ),
             decoration: InputDecoration(
               counterText: '',
               hintText: 'Código 6 dígitos',
               hintStyle: TextStyle(
-                color: Constants.kTextSecondaryColor.withValues(alpha: 0.4),
-                fontSize: 16,
+                color: Constants.textSecondary(context).withValues(alpha: 0.5),
+                fontSize: 14,
                 letterSpacing: 2,
               ),
               filled: true,
-              fillColor: Constants.kBackgroundColor,
+              fillColor: Constants.surfaceLight(context),
               contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Constants.kBorderColor),
+                borderSide: BorderSide(color: Constants.border(context)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Constants.kBorderColor),
+                borderSide: BorderSide(color: Constants.border(context)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Constants.kSecondaryColor, width: 1.8),
+                borderSide: BorderSide(color: Constants.accent(context), width: 1.5),
               ),
             ),
           ),
-          const Gap(16),
+          const Gap(14),
 
           MyPasswordField(
             controller: _newPasswordController,
@@ -264,7 +258,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             prefixIcon: const Icon(Icons.lock_outline_rounded),
             validator: (value) => Validations.validatePassword(value),
           ),
-          const Gap(14),
+          const Gap(12),
 
           MyPasswordField(
             controller: _confirmPasswordController,
@@ -276,21 +270,21 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
               _newPasswordController.text,
             ),
           ),
-          const Gap(24),
+          const Gap(22),
 
           MyButton(
-            color: Constants.kPrimaryColor,
             text: 'Actualizar contraseña',
             onPressed: _resetPassword,
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 20),
-                Gap(8),
+                Icon(Icons.check_circle_outline_rounded, color: Constants.primaryContent(context), size: 18),
+                const Gap(8),
                 MyText(
                   'Actualizar contraseña',
-                  color: Colors.white,
+                  color: Constants.primaryContent(context),
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ],
             ),
@@ -302,10 +296,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 _codeSent = false;
               });
             },
-            child: const MyText(
+            child: MyText(
               'Cambiar correo o reenviar código',
               fontSize: 12.5,
-              color: Constants.kSecondaryColor,
+              color: Constants.accent(context),
             ),
           ),
         ],

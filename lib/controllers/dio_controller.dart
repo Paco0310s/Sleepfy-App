@@ -76,36 +76,29 @@ class DioController {
       }
 
       if (showLoading) {
-        switch (e.type) {
-          case DioExceptionType.receiveTimeout:
-            MySnackBar.showSnackBarError('Tiempo de espera de respuesta agotado');
-            break;
-          case DioExceptionType.sendTimeout:
-            MySnackBar.showSnackBarError('Tiempo de espera de envío agotado');
-            break;
-          case DioExceptionType.cancel:
-            MySnackBar.showSnackBarError('Petición cancelada');
-            break;
-          case DioExceptionType.connectionTimeout:
-            MySnackBar.showSnackBarError('Tiempo de espera de conexión agotado');
-            break;
-          case DioExceptionType.badCertificate:
-            toLogin();
-            MySnackBar.showSnackBarError('Su sesión ha expirado, inicie sesión nuevamente');
-            break;
-          case DioExceptionType.badResponse:
-            MySnackBar.showSnackBarError(message ?? 'Ocurrió un error, intente nuevamente');
-            break;
-          case DioExceptionType.connectionError:
-            if (UserPreferences.token == null) {
-              MySnackBar.showSnackBarError('Verifique su conexión a internet');
-            } else {
-              getx.Get.to(() => const ReloadView());
-            }
-            break;
-          case DioExceptionType.unknown:
-            MySnackBar.showSnackBarError('Error desconocido');
-            break;
+        if (e.type == DioExceptionType.receiveTimeout) {
+          MySnackBar.showSnackBarError('Tiempo de espera de respuesta agotado');
+        } else if (e.type == DioExceptionType.sendTimeout) {
+          MySnackBar.showSnackBarError('Tiempo de espera de envío agotado');
+        } else if (e.type == DioExceptionType.cancel) {
+          MySnackBar.showSnackBarError('Petición cancelada');
+        } else if (e.type == DioExceptionType.connectionTimeout) {
+          MySnackBar.showSnackBarError('Tiempo de espera de conexión agotado');
+        } else if (e.type == DioExceptionType.badCertificate) {
+          toLogin();
+          MySnackBar.showSnackBarError('Su sesión ha expirado, inicie sesión nuevamente');
+        } else if (e.type == DioExceptionType.badResponse) {
+          MySnackBar.showSnackBarError(message ?? 'Ocurrió un error, intente nuevamente');
+        } else if (e.type == DioExceptionType.connectionError) {
+          if (UserPreferences.token == null) {
+            MySnackBar.showSnackBarError('Verifique su conexión a internet');
+          } else {
+            getx.Get.to(() => const ReloadView());
+          }
+        } else if (e.type == DioExceptionType.unknown) {
+          MySnackBar.showSnackBarError('Error desconocido');
+        } else {
+          MySnackBar.showSnackBarError(message ?? 'Error de conexión');
         }
       }
 

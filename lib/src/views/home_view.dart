@@ -27,9 +27,7 @@ class HomeView extends StatelessWidget {
   String _getDynamicGreeting() {
     final hour = DateTime.now().hour;
     final rawName = UserPreferences.name?.trim();
-    final firstName = (rawName != null && rawName.isNotEmpty)
-        ? ', ${rawName.split(' ').first}'
-        : '';
+    final firstName = (rawName != null && rawName.isNotEmpty) ? ', ${rawName.split(' ').first}' : '';
 
     if (hour >= 5 && hour < 12) {
       return '☀️ Buenos días$firstName · Que tengas un día lleno de energía';
@@ -70,90 +68,174 @@ class HomeView extends StatelessWidget {
                 slivers: [
                   // Header elegante y minimalista fiel a los colores del logo
                   SliverToBoxAdapter(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(top: 26, bottom: 20),
-                    decoration: BoxDecoration(
-                      color: Constants.background(context),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Constants.border(context),
-                              width: 1.5,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(top: 26, bottom: 20),
+                      decoration: BoxDecoration(
+                        color: Constants.background(context),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Constants.border(context),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/icon.png',
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/icon.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const Gap(14),
-                        MyText(
-                          'Sleepfy',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          color: Constants.textPrimary(context),
-                        ),
-                        const Gap(4),
-                        MyText(
-                          'Tu guía hacia el descanso profundo',
-                          fontSize: 13.5,
-                          color: Constants.textSecondary(context),
-                        ),
-                        const Gap(12),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 24),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Constants.surface(context),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Constants.border(context),
-                            ),
-                          ),
-                          child: MyText(
-                            _getDynamicGreeting(),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          const Gap(14),
+                          MyText(
+                            'Sleepfy',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
                             color: Constants.textPrimary(context),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
+                          const Gap(4),
+                          MyText(
+                            'Tu guía hacia el descanso profundo',
+                            fontSize: 13.5,
+                            color: Constants.textSecondary(context),
+                          ),
+                          const Gap(12),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Constants.surface(context),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Constants.border(context),
+                              ),
+                            ),
+                            child: MyText(
+                              _getDynamicGreeting(),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Constants.textPrimary(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                // Tarjeta de estado: Cuestionario o Resultados
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Builder(builder: (context) {
-                      if (testProvider.isLoading) {
-                        return Container(
-                          padding: const EdgeInsets.all(28),
-                          decoration: BoxDecoration(
-                            color: Constants.surface(context),
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(color: Constants.border(context)),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(color: Constants.accent(context)),
-                          ),
-                        );
-                      }
+                  // Tarjeta de estado: Cuestionario o Resultados
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Builder(builder: (context) {
+                        if (testProvider.isLoading) {
+                          return Container(
+                            padding: const EdgeInsets.all(28),
+                            decoration: BoxDecoration(
+                              color: Constants.surface(context),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: Constants.border(context)),
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(color: Constants.accent(context)),
+                            ),
+                          );
+                        }
 
-                      if (testProvider.testFinished) {
+                        if (testProvider.testFinished) {
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Constants.surface(context),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: Constants.border(context), width: 1.2),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Constants.kSageGreen.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.check_circle_outline_rounded,
+                                        color: Constants.kSageGreen,
+                                        size: 22,
+                                      ),
+                                    ),
+                                    const Gap(12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          MyText(
+                                            'Cuestionario completado',
+                                            color: Constants.textPrimary(context),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                          const Gap(2),
+                                          MyText(
+                                            'Tu rutina de descanso está lista',
+                                            color: Constants.textSecondary(context),
+                                            fontSize: 12.5,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Gap(16),
+                                MyButton(
+                                  text: 'Ver mi rutina personalizada',
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.auto_awesome, size: 18, color: Constants.primaryContent(context)),
+                                      const Gap(8),
+                                      MyText(
+                                        'Ver mi rutina personalizada',
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: Constants.primaryContent(context),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    Get.to(() => const ResultsView());
+                                  },
+                                ),
+                                const Gap(6),
+                                Center(
+                                  child: TextButton.icon(
+                                    icon: Icon(Icons.refresh_rounded, size: 15, color: Constants.textSecondary(context)),
+                                    label: MyText(
+                                      'Reevaluar mis hábitos de sueño',
+                                      color: Constants.textSecondary(context),
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    onPressed: () => testProvider.startRetake(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
                         return Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
@@ -169,12 +251,12 @@ class HomeView extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Constants.kSageGreen.withValues(alpha: 0.15),
+                                      color: Constants.surfaceLight(context),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: const Icon(
-                                      Icons.check_circle_outline_rounded,
-                                      color: Constants.kSageGreen,
+                                    child: Icon(
+                                      Icons.bedtime_outlined,
+                                      color: Constants.accent(context),
                                       size: 22,
                                     ),
                                   ),
@@ -184,14 +266,14 @@ class HomeView extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         MyText(
-                                          'Cuestionario completado',
+                                          'Análisis de descanso',
                                           color: Constants.textPrimary(context),
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16,
                                         ),
                                         const Gap(2),
                                         MyText(
-                                          'Tu rutina de descanso está lista',
+                                          'Descubre por qué te cuesta dormir',
                                           color: Constants.textSecondary(context),
                                           fontSize: 12.5,
                                         ),
@@ -200,16 +282,23 @@ class HomeView extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              const Gap(12),
+                              MyText(
+                                'Responde un cuestionario clínico rápido para que Sleepfy diseñe una rutina personalizada según tus hábitos.',
+                                color: Constants.textSecondary(context),
+                                fontSize: 13,
+                                height: 1.45,
+                              ),
                               const Gap(16),
                               MyButton(
-                                text: 'Ver mi rutina personalizada',
+                                text: 'Comenzar cuestionario',
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.auto_awesome, size: 18, color: Constants.primaryContent(context)),
-                                    const Gap(8),
+                                    Icon(Icons.play_arrow_rounded, size: 20, color: Constants.primaryContent(context)),
+                                    const Gap(6),
                                     MyText(
-                                      'Ver mi rutina personalizada',
+                                      'Comenzar cuestionario',
                                       fontSize: 14.5,
                                       fontWeight: FontWeight.w600,
                                       color: Constants.primaryContent(context),
@@ -217,36 +306,48 @@ class HomeView extends StatelessWidget {
                                   ],
                                 ),
                                 onPressed: () {
-                                  Get.to(() => const ResultsView());
+                                  Get.to(() => const TestView());
                                 },
-                              ),
-                              const Gap(6),
-                              Center(
-                                child: TextButton.icon(
-                                  icon: Icon(Icons.refresh_rounded, size: 15, color: Constants.textSecondary(context)),
-                                  label: MyText(
-                                    'Reevaluar mis hábitos de sueño',
-                                    color: Constants.textSecondary(context),
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  onPressed: () => testProvider.startRetake(),
-                                ),
                               ),
                             ],
                           ),
                         );
-                      }
+                      }),
+                    ),
+                  ),
 
-                      return Container(
-                        padding: const EdgeInsets.all(20),
+                  // Barra de herramientas interactivas populares
+                  const SliverToBoxAdapter(
+                    child: _QuickToolsBar(),
+                  ),
+
+                  // Check-in matutino de energía
+                  const SliverToBoxAdapter(
+                    child: _MorningCheckInCard(),
+                  ),
+
+                  // Gráfica de horas de sueño
+                  const SliverToBoxAdapter(
+                    child: ChartView(),
+                  ),
+
+                  // Resumen compacto de descanso
+                  const SliverToBoxAdapter(
+                    child: _SleepSummaryCard(),
+                  ),
+
+                  // Banner de adquisición del Kit Sleepfy
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: Container(
+                        padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: Constants.surface(context),
                           borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: Constants.border(context), width: 1.2),
+                          border: Border.all(color: Constants.border(context), width: 1),
                         ),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
@@ -254,206 +355,103 @@ class HomeView extends StatelessWidget {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Constants.surfaceLight(context),
-                                    borderRadius: BorderRadius.circular(12),
+                                    shape: BoxShape.circle,
                                   ),
-                                  child: Icon(
-                                    Icons.bedtime_outlined,
-                                    color: Constants.accent(context),
-                                    size: 22,
+                                  child: const Icon(
+                                    Icons.spa_outlined,
+                                    color: Constants.kSageGreen,
+                                    size: 24,
                                   ),
                                 ),
-                                const Gap(12),
+                                const Gap(14),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       MyText(
-                                        'Análisis de descanso',
-                                        color: Constants.textPrimary(context),
+                                        'Kit Sleepfy de Relajación',
+                                        fontSize: 15.5,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 16,
+                                        color: Constants.textPrimary(context),
                                       ),
                                       const Gap(2),
                                       MyText(
-                                        'Descubre por qué te cuesta dormir',
+                                        'Aromaterapia, bálsamos e infusiones relajantes',
+                                        fontSize: 12,
                                         color: Constants.textSecondary(context),
-                                        fontSize: 12.5,
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                            const Gap(12),
-                            MyText(
-                              'Responde un cuestionario clínico rápido para que Sleepfy diseñe una rutina personalizada según tus hábitos.',
-                              color: Constants.textSecondary(context),
-                              fontSize: 13,
-                              height: 1.45,
-                            ),
-                            const Gap(16),
+                            const Gap(14),
                             MyButton(
-                              text: 'Comenzar cuestionario',
+                              outlined: true,
+                              text: 'Conocer y adquirir el kit',
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.play_arrow_rounded, size: 20, color: Constants.primaryContent(context)),
-                                  const Gap(6),
+                                  Icon(Icons.shopping_bag_outlined, color: Constants.textPrimary(context), size: 18),
+                                  const Gap(8),
                                   MyText(
-                                    'Comenzar cuestionario',
-                                    fontSize: 14.5,
+                                    'Conocer y adquirir el kit',
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: Constants.primaryContent(context),
+                                    color: Constants.textPrimary(context),
                                   ),
                                 ],
                               ),
                               onPressed: () {
-                                Get.to(() => const TestView());
+                                const urlInstagram = 'https://www.instagram.com/_sleepfy/';
+                                const String phone1 = '3921694141';
+                                const String phone2 = '3929308377';
+
+                                showAdaptiveDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      backgroundColor: Constants.surface(context),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18),
+                                        side: BorderSide(color: Constants.border(context)),
+                                      ),
+                                      title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
+                                      content: Wrap(
+                                        spacing: 10,
+                                        runSpacing: 10,
+                                        children: const [
+                                          SocialNetworkItem(
+                                            image: 'assets/images/instagram.png',
+                                            url: urlInstagram,
+                                            text: 'Instagram',
+                                          ),
+                                          SocialNetworkItem(
+                                            image: 'assets/images/whatsapp.png',
+                                            url: 'https://wa.me/52$phone1',
+                                            text: 'WhatsApp 1',
+                                          ),
+                                          SocialNetworkItem(
+                                            image: 'assets/images/whatsapp.png',
+                                            url: 'https://wa.me/52$phone2',
+                                            text: 'WhatsApp 2',
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
                           ],
                         ),
-                      );
-                    }),
-                  ),
-                ),
-
-                // Barra de herramientas interactivas populares
-                const SliverToBoxAdapter(
-                  child: _QuickToolsBar(),
-                ),
-
-                // Check-in matutino de energía
-                const SliverToBoxAdapter(
-                  child: _MorningCheckInCard(),
-                ),
-
-                // Gráfica de horas de sueño
-                const SliverToBoxAdapter(
-                  child: ChartView(),
-                ),
-
-                // Resumen compacto de descanso
-                const SliverToBoxAdapter(
-                  child: _SleepSummaryCard(),
-                ),
-
-                // Banner de adquisición del Kit Sleepfy
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: Constants.surface(context),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: Constants.border(context), width: 1),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Constants.surfaceLight(context),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.spa_outlined,
-                                  color: Constants.kSageGreen,
-                                  size: 24,
-                                ),
-                              ),
-                              const Gap(14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    MyText(
-                                      'Kit Sleepfy de Relajación',
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: Constants.textPrimary(context),
-                                    ),
-                                    const Gap(2),
-                                    MyText(
-                                      'Aromaterapia, bálsamos e infusiones relajantes',
-                                      fontSize: 12,
-                                      color: Constants.textSecondary(context),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Gap(14),
-                          MyButton(
-                            outlined: true,
-                            text: 'Conocer y adquirir el kit',
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.shopping_bag_outlined, color: Constants.textPrimary(context), size: 18),
-                                const Gap(8),
-                                MyText(
-                                  'Conocer y adquirir el kit',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Constants.textPrimary(context),
-                                ),
-                              ],
-                            ),
-                            onPressed: () {
-                              const urlInstagram = 'https://www.instagram.com/_sleepfy/';
-                              const String phone1 = '3921694141';
-                              const String phone2 = '3921219786';
-
-                              showAdaptiveDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    backgroundColor: Constants.surface(context),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                      side: BorderSide(color: Constants.border(context)),
-                                    ),
-                                    title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
-                                    content: Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: const [
-                                        SocialNetworkItem(
-                                          image: 'assets/images/instagram.png',
-                                          url: urlInstagram,
-                                          text: 'Instagram',
-                                        ),
-                                        SocialNetworkItem(
-                                          image: 'assets/images/whatsapp.png',
-                                          url: 'https://wa.me/52$phone1',
-                                          text: 'WhatsApp 1',
-                                        ),
-                                        SocialNetworkItem(
-                                          image: 'assets/images/whatsapp.png',
-                                          url: 'https://wa.me/52$phone2',
-                                          text: 'WhatsApp 2',
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
                       ),
                     ),
                   ),
-                ),
-                const SliverToBoxAdapter(child: Gap(20)),
-              ],
+                  const SliverToBoxAdapter(child: Gap(20)),
+                ],
+              ),
             ),
-          ),
 
             // Botones flotantes modernos (Settings & Tools)
             Positioned(

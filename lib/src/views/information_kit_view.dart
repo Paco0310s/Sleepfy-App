@@ -92,7 +92,7 @@ class InformationKitView extends StatelessWidget {
                 onPressed: () {
                   const urlInstagram = 'https://www.instagram.com/_sleepfy/';
                   const String phone1 = '3921694141';
-                  const String phone2 = '3921219786';
+                  const String phone2 = '3929308377';
 
                   showAdaptiveDialog(
                     context: context,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/utils/my_snackbar.dart';
@@ -258,33 +257,44 @@ class AboutView extends StatelessWidget {
                     color: Constants.textSecondary(context),
                     height: 1.45,
                   ),
-                  const Gap(16),
-
-                  // CLABE MercadoPago
-                  _buildPaymentTile(
-                    context,
-                    title: 'CLABE MercadoPago',
-                    number: '722969010225670860',
-                    holder: 'Francisco Rafael Sotelo Delgado',
-                    icon: Icons.account_balance_rounded,
-                    onCopy: () {
-                      Clipboard.setData(const ClipboardData(text: '722969010225670860'));
-                      MySnackBar.showSnackBarSuccess('CLABE copiada al portapapeles');
-                    },
-                  ),
-                  const Gap(12),
-
-                  // OXXO Spin
-                  _buildPaymentTile(
-                    context,
-                    title: 'Depósito OXXO Spin',
-                    number: '2242 1703 2007 1607',
-                    holder: 'Francisco Rafael Sotelo Delgado',
-                    icon: Icons.credit_card_rounded,
-                    onCopy: () {
-                      Clipboard.setData(const ClipboardData(text: '2242 1703 2007 1607'));
-                      MySnackBar.showSnackBarSuccess('Número de tarjeta OXXO Spin copiado');
-                    },
+                  const Gap(14),
+                  Material(
+                    color: Constants.surfaceLight(context),
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => _launchWeb('https://pacosotelo.com/#donaciones'),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Constants.border(context)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.local_cafe_rounded,
+                              color: Constants.kSoftAmber,
+                              size: 19,
+                            ),
+                            const Gap(10),
+                            MyText(
+                              'Invitar un café',
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.textPrimary(context),
+                            ),
+                            const Gap(8),
+                            Icon(
+                              Icons.open_in_new_rounded,
+                              size: 17,
+                              color: Constants.textSecondary(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -303,93 +313,6 @@ class AboutView extends StatelessWidget {
             const Gap(28),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildPaymentTile(
-    BuildContext context, {
-    required String title,
-    required String number,
-    required String holder,
-    required IconData icon,
-    required VoidCallback onCopy,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Constants.surfaceLight(context),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Constants.border(context)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 17, color: Constants.primary(context)),
-              const Gap(8),
-              Expanded(
-                child: MyText(
-                  title,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Constants.textPrimary(context),
-                ),
-              ),
-              Material(
-                color: Constants.surface(context),
-                borderRadius: BorderRadius.circular(8),
-                child: InkWell(
-                  onTap: onCopy,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Constants.border(context)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.copy_rounded,
-                          size: 13,
-                          color: Constants.kSageGreen,
-                        ),
-                        const Gap(5),
-                        MyText(
-                          'COPIAR',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: Constants.kSageGreen,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const Gap(8),
-          SelectableText(
-            number,
-            style: TextStyle(
-              fontSize: 14.5,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'monospace',
-              letterSpacing: 0.5,
-              color: Constants.textPrimary(context),
-            ),
-          ),
-          const Gap(4),
-          MyText(
-            'A nombre de:\n$holder',
-            fontSize: 12,
-            color: Constants.textSecondary(context),
-            height: 1.35,
-          ),
-        ],
       ),
     );
   }

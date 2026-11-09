@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Constants {
   static const String appName = 'Sleepfy';
-  static const String appVersion = '1.5.0';
+  static const String appVersion = '1.5.1';
 
   // -------------------------------------------------------------
   // PALETA INSPIRADA EN EL LOGO DE SLEEPFY:

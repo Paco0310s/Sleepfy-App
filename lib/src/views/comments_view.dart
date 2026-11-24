@@ -36,11 +36,54 @@ class CommentsViewState extends State<CommentsView> {
     }
   }
 
+  void _confirmDeleteComment(BuildContext context, CommentsProvider provider, CommentModel comment) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Constants.surface(ctx),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: Constants.border(ctx)),
+        ),
+        title: MyText(
+          'Eliminar comentario',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Constants.textPrimary(ctx),
+        ),
+        content: MyText(
+          '¿Seguro que deseas eliminar este comentario de ${comment.user.name}?',
+          fontSize: 13.5,
+          color: Constants.textSecondary(ctx),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: MyText('Cancelar', color: Constants.textSecondary(ctx)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const MyText(
+              'Eliminar',
+              color: Constants.kSoftRose,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await provider.deleteCommentAsAdmin(comment.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final commentsProvider = Provider.of<CommentsProvider>(context);
     final List<CommentModel> comments = commentsProvider.comments;
     final int myUserId = UserPreferences.id ?? -1;
+    final bool isAdmin = UserPreferences.isAdmin;
 
     return Scaffold(
       backgroundColor: Constants.background(context),
@@ -114,11 +157,35 @@ class CommentsViewState extends State<CommentsView> {
                       child: Column(
                         crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                         children: [
-                          MyText(
-                            isMine ? 'Tú' : '${comment.user.name} ${comment.user.lastName}',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isMine ? Constants.primaryContent(context) : Constants.kSageGreen,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: MyText(
+                                  isMine ? 'Tú' : '${comment.user.name} ${comment.user.lastName}',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: isMine ? Constants.primaryContent(context) : Constants.kSageGreen,
+                                ),
+                              ),
+                              if (isAdmin) ...[
+                                const Gap(8),
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(6),
+                                  onTap: () => _confirmDeleteComment(context, commentsProvider, comment),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: Icon(
+                                      Icons.delete_outline_rounded,
+                                      size: 16,
+                                      color: isMine
+                                          ? Constants.primaryContent(context).withValues(alpha: 0.85)
+                                          : Constants.kSoftRose,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                           const Gap(4),
                           MyText(

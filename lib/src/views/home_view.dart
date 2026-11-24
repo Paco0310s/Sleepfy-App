@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:sleepfy/controllers/content_controller.dart';
+import 'package:sleepfy/models/content_item_model.dart';
 import 'package:sleepfy/src/providers/control_dreams_provider.dart';
 import 'package:sleepfy/src/providers/test_provider.dart';
 import 'package:sleepfy/src/utils/constants.dart';
+import 'package:sleepfy/src/utils/my_snackbar.dart';
 import 'package:sleepfy/src/utils/shared_prefences.dart';
 import 'package:sleepfy/src/views/ai_chat_view.dart';
 import 'package:sleepfy/src/views/breathing_exercise_view.dart';
 import 'package:sleepfy/src/views/challenges_view.dart';
 import 'package:sleepfy/src/views/chart_view.dart';
 import 'package:sleepfy/src/views/control_dreams_view.dart';
+import 'package:sleepfy/src/views/information_kit_view.dart';
 import 'package:sleepfy/src/views/results_view.dart';
 import 'package:sleepfy/src/views/settings_view.dart';
 import 'package:sleepfy/src/views/sleep_calculator_view.dart';
@@ -18,7 +22,6 @@ import 'package:sleepfy/src/views/test_view.dart';
 import 'package:sleepfy/src/views/tools_view.dart';
 import 'package:sleepfy/src/widgets/my_button.dart';
 import 'package:sleepfy/src/widgets/my_text.dart';
-import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatelessWidget {
@@ -130,6 +133,11 @@ class HomeView extends StatelessWidget {
                         ],
                       ),
                     ),
+                  ),
+
+                  // Banner dinámico de avisos (solo aparece si el admin publicó alguno activo)
+                  const SliverToBoxAdapter(
+                    child: _HomeAnnouncementBanner(),
                   ),
 
                   // Tarjeta de estado: Cuestionario o Resultados
@@ -403,44 +411,7 @@ class HomeView extends StatelessWidget {
                                 ],
                               ),
                               onPressed: () {
-                                const urlInstagram = 'https://www.instagram.com/_sleepfy/';
-                                const String phone1 = '3921694141';
-                                const String phone2 = '3929308377';
-
-                                showAdaptiveDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: Constants.surface(context),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18),
-                                        side: BorderSide(color: Constants.border(context)),
-                                      ),
-                                      title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
-                                      content: Wrap(
-                                        spacing: 10,
-                                        runSpacing: 10,
-                                        children: const [
-                                          SocialNetworkItem(
-                                            image: 'assets/images/instagram.png',
-                                            url: urlInstagram,
-                                            text: 'Instagram',
-                                          ),
-                                          SocialNetworkItem(
-                                            image: 'assets/images/whatsapp.png',
-                                            url: 'https://wa.me/52$phone1',
-                                            text: 'WhatsApp 1',
-                                          ),
-                                          SocialNetworkItem(
-                                            image: 'assets/images/whatsapp.png',
-                                            url: 'https://wa.me/52$phone2',
-                                            text: 'WhatsApp 2',
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
+                                Get.to(() => const InformationKitView());
                               },
                             ),
                           ],
@@ -869,6 +840,135 @@ class _MorningCheckInCardState extends State<_MorningCheckInCard> {
                   ),
                 ],
               ),
+      ),
+    );
+  }
+}
+
+class _HomeAnnouncementBanner extends StatefulWidget {
+  const _HomeAnnouncementBanner();
+
+  @override
+  State<_HomeAnnouncementBanner> createState() => _HomeAnnouncementBannerState();
+}
+
+class _HomeAnnouncementBannerState extends State<_HomeAnnouncementBanner> {
+  ContentItemModel? _banner;
+  bool _dismissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBanner();
+  }
+
+  Future<void> _loadBanner() async {
+    final items = await ContentController.getActiveBySection(ContentSections.homeBanner);
+    if (!mounted || items.isEmpty) return;
+    setState(() {
+      _banner = items.first;
+    });
+  }
+
+  Future<void> _openLink(String url) async {
+    final uri = Uri.tryParse(url.trim());
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      MySnackBar.showSnackBarError('No se pudo abrir el enlace');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_dismissed || _banner == null) {
+      return const SizedBox.shrink();
+    }
+
+    final banner = _banner!;
+    final url = banner.url?.trim() ?? '';
+    final hasLink = url.isNotEmpty;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: hasLink ? () => _openLink(url) : null,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Constants.surface(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Constants.kSoftAmber.withValues(alpha: 0.5)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Constants.kSoftAmber.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.campaign_outlined,
+                  color: Constants.kSoftAmber,
+                  size: 20,
+                ),
+              ),
+              const Gap(12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MyText(
+                      banner.title,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
+                    ),
+                    if ((banner.subtitle ?? '').isNotEmpty) ...[
+                      const Gap(3),
+                      MyText(
+                        banner.subtitle!,
+                        fontSize: 12,
+                        color: Constants.textSecondary(context),
+                        height: 1.35,
+                      ),
+                    ],
+                    if (hasLink) ...[
+                      const Gap(6),
+                      const Row(
+                        children: [
+                          MyText(
+                            'Ver más',
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: Constants.kSoftAmber,
+                          ),
+                          Gap(4),
+                          Icon(Icons.open_in_new_rounded, size: 13, color: Constants.kSoftAmber),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () => setState(() => _dismissed = true),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 17,
+                    color: Constants.textSecondary(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

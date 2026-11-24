@@ -78,4 +78,46 @@ class UserController {
     }
     return false;
   }
+
+  static Future<void> logoutRemote() async {
+    final refreshToken = UserPreferences.refreshToken;
+    await DioController.petition(
+      HTTPMethods.post,
+      'auth/logout',
+      data: (refreshToken != null && refreshToken.isNotEmpty)
+          ? {'refreshToken': refreshToken}
+          : <String, dynamic>{},
+      showLoading: false,
+    );
+  }
+
+  static Future<bool> updateProfile({
+    required String name,
+    required String lastName,
+  }) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.patch,
+      'auth/me',
+      data: {
+        'name': name.trim(),
+        'lastName': lastName.trim(),
+      },
+    );
+
+    if (resp.status == 200 && resp.data is Map<String, dynamic>) {
+      final user = UserModel.fromJson(resp.data as Map<String, dynamic>);
+      await UserPreferences.setName(user.name);
+      await UserPreferences.setLastName(user.lastName);
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> deleteAccount() async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.delete,
+      'auth/me',
+    );
+    return resp.status == 200;
+  }
 }

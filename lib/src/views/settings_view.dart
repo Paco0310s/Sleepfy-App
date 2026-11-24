@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:sleepfy/controllers/dio_controller.dart';
 import 'package:sleepfy/controllers/user_controller.dart';
 import 'package:sleepfy/src/providers/control_dreams_provider.dart';
 import 'package:sleepfy/src/providers/test_provider.dart';
@@ -166,11 +165,7 @@ class _SettingsViewState extends State<SettingsView> {
                 textColor: Constants.kErrorColor,
                 showArrow: false,
                 onTap: () async {
-                  await DioController.petition(
-                    HTTPMethods.post,
-                    'auth/logout',
-                    showLoading: false,
-                  );
+                  await UserController.logoutRemote();
                   await UserPreferences.logout();
                   if (context.mounted) {
                     Provider.of<TestProvider>(context, listen: false).reset();

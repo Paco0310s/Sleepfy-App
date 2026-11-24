@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sleepfy/controllers/admin_controller.dart';
 import 'package:sleepfy/controllers/comments_controller.dart';
 import 'package:sleepfy/models/comment_model.dart';
 import 'package:sleepfy/src/utils/my_snackbar.dart';
@@ -51,6 +52,15 @@ class CommentsProvider extends ChangeNotifier {
 
       MySnackBar.showSnackBarSuccess('Comentario enviado');
 
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteCommentAsAdmin(int commentId) async {
+    final ok = await AdminController.deleteComment(commentId);
+    if (ok) {
+      comments.removeWhere((c) => c.id == commentId);
+      MySnackBar.showSnackBarSuccess('Comentario eliminado');
       notifyListeners();
     }
   }

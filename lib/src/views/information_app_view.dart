@@ -1,13 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:sleepfy/controllers/content_controller.dart';
+import 'package:sleepfy/models/content_item_model.dart';
 import 'package:sleepfy/src/utils/constants.dart';
+import 'package:sleepfy/src/utils/my_snackbar.dart';
 import 'package:sleepfy/src/widgets/my_button.dart';
 import 'package:sleepfy/src/widgets/my_text.dart';
 import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class InformationAppView extends StatelessWidget {
+class InformationAppView extends StatefulWidget {
   const InformationAppView({super.key});
+
+  @override
+  State<InformationAppView> createState() => _InformationAppViewState();
+}
+
+class _InformationAppViewState extends State<InformationAppView> {
+  List<ContentItemModel> _cards = [];
+  List<ContentItemModel> _links = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadContent();
+  }
+
+  Future<void> _loadContent() async {
+    final results = await Future.wait([
+      ContentController.getActiveBySection(ContentSections.insomniaCard),
+      ContentController.getActiveBySection(ContentSections.insomniaLink),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      _cards = results[0];
+      _links = results[1];
+      _isLoading = false;
+    });
+  }
+
+  IconData _resolveIcon(String? iconKey) {
+    switch (iconKey) {
+      case 'help':
+        return Icons.help_outline_rounded;
+      case 'warning':
+        return Icons.warning_amber_rounded;
+      case 'healing':
+        return Icons.healing_rounded;
+      case 'spa':
+        return Icons.spa_rounded;
+      default:
+        return Icons.info_outline_rounded;
+    }
+  }
+
+  Color _resolveColor(BuildContext context, String? iconKey) {
+    switch (iconKey) {
+      case 'warning':
+        return const Color(0xFFD49E3D);
+      case 'healing':
+        return Constants.kSoftRose;
+      case 'spa':
+        return Constants.kSageGreen;
+      default:
+        return Constants.accent(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,83 +75,49 @@ class InformationAppView extends StatelessWidget {
       appBar: AppBar(
         title: const MyTitleAppBar(title: 'Conoce más sobre el insomnio'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoCard(
-              context,
-              title: '¿Qué es el Insomnio?',
-              icon: Icons.help_outline_rounded,
-              iconColor: Constants.accent(context),
-              content:
-                  'El insomnio es un trastorno del sueño caracterizado por la dificultad para conciliar el sueño, mantenerse dormido o lograr un descanso verdaderamente reparador. Puede manifestarse de forma aguda (corto plazo) o crónica (más de 3 meses).',
-            ),
-            const Gap(12),
-            _buildInfoCard(
-              context,
-              title: 'Características del Insomnio',
-              icon: Icons.warning_amber_rounded,
-              iconColor: const Color(0xFFD49E3D),
-              content:
-                  '◆ Dificultad para conciliar el sueño (tardar más de 30 minutos).\n'
-                  '◆ Despertares frecuentes e interrupciones durante la noche.\n'
-                  '◆ Despertarse mucho antes de lo deseado sin poder volver a dormir.\n'
-                  '◆ Sensación de sueño no reparador y cansancio diurno.',
-            ),
-            const Gap(12),
-            _buildInfoCard(
-              context,
-              title: '¿Cómo Afecta el Insomnio?',
-              icon: Icons.healing_rounded,
-              iconColor: Constants.kSoftRose,
-              content:
-                  '◆ Fatiga persistente y bajo nivel de energía.\n'
-                  '◆ Dificultad para concentrarse y problemas de retención o memoria.\n'
-                  '◆ Mayor irritabilidad, ansiedad y fluctuaciones del estado de ánimo.\n'
-                  '◆ Disminución en la respuesta del sistema inmunológico.',
-            ),
-            const Gap(12),
-            _buildInfoCard(
-              context,
-              title: 'La Importancia Vital del Sueño',
-              icon: Icons.spa_rounded,
-              iconColor: Constants.kSageGreen,
-              content:
-                  'Durante las fases profundas del sueño se regulan hormonas clave como la melatonina y el cortisol, se restauran las células y el cerebro consolida los recuerdos y aprendizajes del día.',
-            ),
-            const Gap(22),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: MyText(
-                'Fuentes y recursos médicos recomendados',
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Constants.textPrimary(context),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator(color: Constants.primary(context)))
+          : RefreshIndicator(
+              color: Constants.kSageGreen,
+              onRefresh: _loadContent,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ..._cards.map((card) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildInfoCard(
+                            context,
+                            title: card.title,
+                            icon: _resolveIcon(card.iconKey),
+                            iconColor: _resolveColor(context, card.iconKey),
+                            content: card.body ?? card.subtitle ?? '',
+                          ),
+                        )),
+                    if (_links.isNotEmpty) ...[
+                      const Gap(10),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: MyText(
+                          'Fuentes y recursos médicos recomendados',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Constants.textPrimary(context),
+                        ),
+                      ),
+                      const Gap(10),
+                      ..._links.map((link) => LinkButton(
+                            title: link.title,
+                            url: link.url ?? '',
+                          )),
+                    ],
+                    const Gap(20),
+                  ],
+                ),
               ),
             ),
-            const Gap(10),
-            const LinkButton(
-              title: 'MedlinePlus en Español',
-              url: 'https://medlineplus.gov/spanish/',
-            ),
-            const LinkButton(
-              title: 'Mayo Clinic - Trastornos del Sueño',
-              url: 'https://www.mayoclinic.org/es-es/',
-            ),
-            const LinkButton(
-              title: 'National Sleep Foundation (NSF)',
-              url: 'https://www.sleepfoundation.org/',
-            ),
-            const LinkButton(
-              title: 'CDC - Salud y Sueño',
-              url: 'https://www.cdc.gov/sleep/index.html',
-            ),
-            const Gap(20),
-          ],
-        ),
-      ),
     );
   }
 
@@ -104,6 +129,7 @@ class InformationAppView extends StatelessWidget {
     required String content,
   }) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Constants.surface(context),
@@ -154,10 +180,16 @@ class LinkButton extends StatelessWidget {
   const LinkButton({super.key, required this.title, required this.url});
 
   Future<void> _launchURL() async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+    final trimmed = url.trim();
+    if (trimmed.isEmpty) {
+      MySnackBar.showSnackBarError('Enlace no disponible');
+      return;
+    }
+    final uri = Uri.tryParse(trimmed);
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw 'Could not launch $url';
+      MySnackBar.showSnackBarError('No se pudo abrir el enlace');
     }
   }
 

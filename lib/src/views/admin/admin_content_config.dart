@@ -28,6 +28,7 @@ class AdminSectionConfig {
   final String? imageUrlHint;
 
   final bool showIconPicker;
+  final bool allowImageUpload;
 
   const AdminSectionConfig({
     required this.section,
@@ -49,6 +50,7 @@ class AdminSectionConfig {
     this.imageUrlLabel,
     this.imageUrlHint,
     this.showIconPicker = false,
+    this.allowImageUpload = false,
   });
 }
 
@@ -122,6 +124,7 @@ class AdminSectionConfigs {
     urlRequired: true,
     imageUrlLabel: 'URL de portada (opcional)',
     imageUrlHint: 'https://i.scdn.co/image/...',
+    allowImageUpload: true,
   );
 
   static const podcast = AdminSectionConfig(
@@ -138,6 +141,7 @@ class AdminSectionConfigs {
     urlLabel: 'Enlace al podcast *',
     urlHint: 'https://open.spotify.com/... o YouTube',
     urlRequired: true,
+    allowImageUpload: true,
   );
 
   static const challenge = AdminSectionConfig(

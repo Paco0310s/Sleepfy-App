@@ -75,6 +75,36 @@ class ContentController {
     return resp.status == 200;
   }
 
+  static Future<ContentItemModel?> uploadImage(
+    int id,
+    List<int> bytes,
+    String filename,
+  ) async {
+    final ResponseModel resp = await DioController.uploadFile(
+      'content/$id/image',
+      'image',
+      bytes,
+      filename,
+    );
+
+    if ((resp.status == 200 || resp.status == 201) && resp.data is Map<String, dynamic>) {
+      return ContentItemModel.fromJson(resp.data as Map<String, dynamic>);
+    }
+    return null;
+  }
+
+  static Future<ContentItemModel?> deleteImage(int id) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.delete,
+      'content/$id/image',
+    );
+
+    if (resp.status == 200 && resp.data is Map<String, dynamic>) {
+      return ContentItemModel.fromJson(resp.data as Map<String, dynamic>);
+    }
+    return null;
+  }
+
   static List<ContentItemModel> getLocalFallback(String section) {
     switch (section) {
       case ContentSections.insomniaCard:

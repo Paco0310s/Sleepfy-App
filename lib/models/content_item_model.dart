@@ -1,3 +1,5 @@
+import 'package:sleepfy/controllers/dio_controller.dart';
+
 class ContentSections {
   static const String insomniaCard = 'insomnia_card';
   static const String insomniaLink = 'insomnia_link';
@@ -20,6 +22,8 @@ class ContentItemModel {
   final String? iconKey;
   final int sortOrder;
   final bool isActive;
+  final bool hasImage;
+  final String? updatedAt;
 
   ContentItemModel({
     required this.id,
@@ -32,6 +36,8 @@ class ContentItemModel {
     this.iconKey,
     this.sortOrder = 0,
     this.isActive = true,
+    this.hasImage = false,
+    this.updatedAt,
   });
 
   factory ContentItemModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +52,17 @@ class ContentItemModel {
       iconKey: json['iconKey']?.toString(),
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
       isActive: json['isActive'] != false,
+      hasImage: json['hasImage'] == true,
+      updatedAt: json['updatedAt']?.toString(),
     );
+  }
+
+  String? get resolvedImageUrl {
+    if (hasImage && id > 0) {
+      final versionQuery = updatedAt != null ? '?v=${Uri.encodeComponent(updatedAt!)}' : '';
+      return '${DioController.baseUrl}content/$id/image$versionQuery';
+    }
+    final raw = imageUrl?.trim() ?? '';
+    return raw.isNotEmpty ? raw : null;
   }
 }

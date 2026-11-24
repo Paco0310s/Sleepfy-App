@@ -5,6 +5,7 @@ class AdminUserModel {
   final String email;
   final bool isEmailVerified;
   final bool isAdmin;
+  final int activeSessions;
   final String? createdAt;
 
   AdminUserModel({
@@ -14,6 +15,7 @@ class AdminUserModel {
     required this.email,
     required this.isEmailVerified,
     required this.isAdmin,
+    this.activeSessions = 0,
     this.createdAt,
   });
 
@@ -34,7 +36,34 @@ class AdminUserModel {
       email: json['email']?.toString() ?? '',
       isEmailVerified: json['isEmailVerified'] == true,
       isAdmin: json['isAdmin'] == true,
+      activeSessions: (json['activeSessions'] as num?)?.toInt() ?? 0,
       createdAt: json['createdAt']?.toString(),
+    );
+  }
+}
+
+class AdminVerificationCodeModel {
+  final int userId;
+  final String email;
+  final bool isEmailVerified;
+  final String? verificationCode;
+  final String? verificationCodeExpires;
+
+  AdminVerificationCodeModel({
+    required this.userId,
+    required this.email,
+    required this.isEmailVerified,
+    this.verificationCode,
+    this.verificationCodeExpires,
+  });
+
+  factory AdminVerificationCodeModel.fromJson(Map<String, dynamic> json) {
+    return AdminVerificationCodeModel(
+      userId: (json['userId'] as num?)?.toInt() ?? 0,
+      email: json['email']?.toString() ?? '',
+      isEmailVerified: json['isEmailVerified'] == true,
+      verificationCode: json['verificationCode']?.toString(),
+      verificationCodeExpires: json['verificationCodeExpires']?.toString(),
     );
   }
 }

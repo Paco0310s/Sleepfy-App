@@ -286,7 +286,7 @@ class _MusicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = data.imageUrl?.trim() ?? '';
+    final imageUrl = data.resolvedImageUrl ?? '';
 
     return InkWell(
       onTap: onTap,

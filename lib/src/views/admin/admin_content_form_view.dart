@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sleepfy/controllers/content_controller.dart';
 import 'package:sleepfy/models/content_item_model.dart';
 import 'package:sleepfy/src/utils/constants.dart';
@@ -38,6 +41,10 @@ class _AdminContentFormViewState extends State<AdminContentFormView> {
   bool _isActive = true;
   bool _isSaving = false;
 
+  Uint8List? _pickedImageBytes;
+  String? _pickedImageName;
+  bool _removeExistingImage = false;
+
   bool get _isEditing => widget.item != null;
 
   static const _iconOptions = [
@@ -71,6 +78,29 @@ class _AdminContentFormViewState extends State<AdminContentFormView> {
     _imageUrlCtrl.dispose();
     _sortOrderCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final XFile? file = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 75,
+      );
+      if (file == null) return;
+
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _pickedImageBytes = bytes;
+        _pickedImageName = file.name.isNotEmpty ? file.name : 'cover.jpg';
+        _removeExistingImage = false;
+      });
+    } catch (_) {
+      MySnackBar.showSnackBarError('No se pudo seleccionar la imagen');
+    }
   }
 
   Future<void> _save() async {
@@ -112,20 +142,41 @@ class _AdminContentFormViewState extends State<AdminContentFormView> {
       saved = await ContentController.createItem(payload);
     }
 
+    if (saved == null) {
+      if (mounted) setState(() => _isSaving = false);
+      return;
+    }
+
+    bool imageFailed = false;
+    if (c.allowImageUpload) {
+      if (_pickedImageBytes != null) {
+        final uploaded = await ContentController.uploadImage(
+          saved.id,
+          _pickedImageBytes!,
+          _pickedImageName ?? 'cover.jpg',
+        );
+        imageFailed = uploaded == null;
+      } else if (_removeExistingImage && widget.item?.hasImage == true) {
+        final removed = await ContentController.deleteImage(saved.id);
+        imageFailed = removed == null;
+      }
+    }
+
     if (!mounted) return;
     setState(() => _isSaving = false);
 
-    if (saved != null) {
+    if (!imageFailed) {
       MySnackBar.showSnackBarSuccess(
         _isEditing ? 'Cambios guardados' : 'Contenido creado correctamente',
       );
-      Get.back(result: true);
     }
+    Get.back(result: true);
   }
 
   @override
   Widget build(BuildContext context) {
     final c = widget.config;
+    final existingImageUrl = (!_removeExistingImage) ? widget.item?.resolvedImageUrl : null;
 
     return Scaffold(
       backgroundColor: Constants.background(context),
@@ -139,6 +190,111 @@ class _AdminContentFormViewState extends State<AdminContentFormView> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           children: [
+            if (c.allowImageUpload) ...[
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Constants.surface(context),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Constants.border(context)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MyText(
+                      'Imagen de portada (desde galería)',
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Constants.textPrimary(context),
+                    ),
+                    const Gap(10),
+                    if (_pickedImageBytes != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(
+                          _pickedImageBytes!,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    else if (existingImageUrl != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          existingImageUrl,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _emptyImageBox(context),
+                        ),
+                      )
+                    else
+                      _emptyImageBox(context),
+                    const Gap(10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Constants.border(context)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                            onPressed: _pickImage,
+                            icon: Icon(
+                              Icons.photo_library_outlined,
+                              size: 18,
+                              color: Constants.primary(context),
+                            ),
+                            label: MyText(
+                              (_pickedImageBytes != null || existingImageUrl != null)
+                                  ? 'Cambiar imagen'
+                                  : 'Elegir de galería',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.textPrimary(context),
+                            ),
+                          ),
+                        ),
+                        if (_pickedImageBytes != null || existingImageUrl != null) ...[
+                          const Gap(10),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Constants.kSoftRose),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _pickedImageBytes = null;
+                                _pickedImageName = null;
+                                _removeExistingImage = true;
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              size: 18,
+                              color: Constants.kSoftRose,
+                            ),
+                            label: const MyText(
+                              'Quitar',
+                              fontSize: 13,
+                              color: Constants.kSoftRose,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(14),
+            ],
             _buildField(
               context,
               controller: _titleCtrl,
@@ -276,6 +432,30 @@ class _AdminContentFormViewState extends State<AdminContentFormView> {
             const Gap(28),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _emptyImageBox(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Constants.surfaceLight(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Constants.border(context)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.image_outlined, size: 28, color: Constants.textSecondary(context)),
+          const Gap(6),
+          MyText(
+            'Sin imagen de galería',
+            fontSize: 12,
+            color: Constants.textSecondary(context),
+          ),
+        ],
       ),
     );
   }

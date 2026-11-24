@@ -47,6 +47,86 @@ class AdminController {
     return null;
   }
 
+  static Future<AdminVerificationCodeModel?> getUserVerificationCode(int userId) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.get,
+      'admin/users/$userId/verification-code',
+      showLoading: true,
+    );
+
+    if (resp.status == 200 && resp.data is Map<String, dynamic>) {
+      return AdminVerificationCodeModel.fromJson(resp.data as Map<String, dynamic>);
+    }
+    return null;
+  }
+
+  static Future<AdminVerificationCodeModel?> generateUserVerificationCode(int userId) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.post,
+      'admin/users/$userId/verification-code',
+    );
+
+    if ((resp.status == 200 || resp.status == 201) && resp.data is Map<String, dynamic>) {
+      return AdminVerificationCodeModel.fromJson(resp.data as Map<String, dynamic>);
+    }
+    return null;
+  }
+
+  static Future<bool> verifyUserEmail(int userId) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.patch,
+      'admin/users/$userId/verify-email',
+    );
+    return resp.status == 200;
+  }
+
+  static Future<bool> changeUserPassword(int userId, String newPassword) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.patch,
+      'admin/users/$userId/password',
+      data: {'newPassword': newPassword},
+    );
+    return resp.status == 200;
+  }
+
+  static Future<bool> clearUserSessions(int userId) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.delete,
+      'admin/users/$userId/sessions',
+    );
+    return resp.status == 200;
+  }
+
+  static Future<bool> deleteUser(int userId) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.delete,
+      'admin/users/$userId',
+    );
+    return resp.status == 200;
+  }
+
+  static Future<AdminUserModel?> updateUser(
+    int userId, {
+    required String name,
+    required String lastName,
+    required String email,
+  }) async {
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.patch,
+      'admin/users/$userId',
+      data: {
+        'name': name.trim(),
+        'lastName': lastName.trim(),
+        'email': email.trim(),
+      },
+    );
+
+    if (resp.status == 200 && resp.data is Map<String, dynamic>) {
+      return AdminUserModel.fromJson(resp.data as Map<String, dynamic>);
+    }
+    return null;
+  }
+
   static Future<AdminTestModel?> getLatestTest() async {
     final ResponseModel resp = await DioController.petition(
       HTTPMethods.get,

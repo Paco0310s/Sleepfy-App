@@ -111,6 +111,8 @@ class _PodcastsViewState extends State<PodcastsView> {
                   const Gap(12),
 
                   ..._podcastList.map((item) {
+                    final imageUrl = item.resolvedImageUrl;
+
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
@@ -121,18 +123,18 @@ class _PodcastsViewState extends State<PodcastsView> {
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(16),
                         onTap: () => _launchURL(item.url),
-                        leading: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Constants.surfaceLight(context),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.headphones_rounded,
-                            color: Constants.kSageGreen,
-                            size: 22,
-                          ),
-                        ),
+                        leading: imageUrl != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  imageUrl,
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => _podcastIconBox(context),
+                                ),
+                              )
+                            : _podcastIconBox(context),
                         title: MyText(
                           item.title,
                           fontWeight: FontWeight.w600,
@@ -160,6 +162,22 @@ class _PodcastsViewState extends State<PodcastsView> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _podcastIconBox(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Constants.surfaceLight(context),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(
+        Icons.headphones_rounded,
+        color: Constants.kSageGreen,
+        size: 22,
+      ),
     );
   }
 }

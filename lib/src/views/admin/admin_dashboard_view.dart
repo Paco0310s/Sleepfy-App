@@ -171,8 +171,8 @@ class AdminDashboardView extends StatelessWidget {
           _AdminModuleCard(
             icon: Icons.manage_accounts_outlined,
             iconColor: Constants.accent(context),
-            title: 'Gestión de Administradores',
-            subtitle: 'Buscar usuarios y otorgar o revocar permisos de administrador.',
+            title: 'Gestión de Usuarios',
+            subtitle: 'Roles, contraseñas, códigos de verificación, sesiones y cuentas.',
             onTap: () => Get.to(() => const AdminUsersView()),
           ),
           const Gap(12),

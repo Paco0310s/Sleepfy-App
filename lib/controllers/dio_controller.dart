@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -16,11 +18,65 @@ import 'package:sleepfy/src/widgets/my_text.dart';
 
 class DioController {
   static Dio get instance => _dio;
+  static String get baseUrl => _baseUrl;
   // Support configurable API URL via --dart-define=API_URL=...
   static const String _baseUrl = String.fromEnvironment(
     'API_URL',
     defaultValue: 'https://sleepfy.api.pacosotelo.com/api/',
   );
+  static Completer<bool>? _refreshCompleter;
+
+  static Future<bool> _refreshAccessToken() async {
+    if (_refreshCompleter != null) {
+      return _refreshCompleter!.future;
+    }
+
+    final refreshToken = UserPreferences.refreshToken;
+    if (refreshToken == null || refreshToken.isEmpty) {
+      return false;
+    }
+
+    final completer = Completer<bool>();
+    _refreshCompleter = completer;
+
+    try {
+      final refreshDio = Dio(
+        BaseOptions(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 20),
+        ),
+      );
+      final resp = await refreshDio.post(
+        '${_baseUrl}auth/refresh',
+        data: {'refreshToken': refreshToken},
+      );
+
+      if (resp.statusCode == 200 && resp.data is Map<String, dynamic>) {
+        final map = resp.data as Map<String, dynamic>;
+        final newAccess = (map['token'] ?? map['access_token'])?.toString();
+        final newRefresh = (map['refreshToken'] ?? map['refresh_token'])?.toString();
+
+        if (newAccess != null && newAccess.isNotEmpty) {
+          await UserPreferences.setToken(newAccess);
+          if (newRefresh != null && newRefresh.isNotEmpty) {
+            await UserPreferences.setRefreshToken(newRefresh);
+          }
+          completer.complete(true);
+          return true;
+        }
+      }
+      completer.complete(false);
+      return false;
+    } catch (_) {
+      completer.complete(false);
+      return false;
+    } finally {
+      _refreshCompleter = null;
+    }
+  }
+
   static final Dio _dio = Dio(
     BaseOptions(
       contentType: Headers.jsonContentType,
@@ -34,6 +90,31 @@ class DioController {
           final headers = options.headers;
           headers.addAll({'authorization': 'Bearer ${UserPreferences.token}'});
           handler.next(options);
+        },
+        onError: (err, handler) async {
+          final statusCode = err.response?.statusCode;
+          final path = err.requestOptions.path;
+          final isAuthRoute = path.contains('auth/login') ||
+              path.contains('auth/register') ||
+              path.contains('auth/refresh');
+          final alreadyRetried = err.requestOptions.extra['_retried'] == true;
+
+          if (statusCode == 401 && !isAuthRoute && !alreadyRetried) {
+            final refreshed = await _refreshAccessToken();
+            if (refreshed && err.requestOptions.data is! FormData) {
+              err.requestOptions.extra['_retried'] = true;
+              err.requestOptions.headers['authorization'] = 'Bearer ${UserPreferences.token}';
+              try {
+                final retryResponse = await _dio.fetch(err.requestOptions);
+                return handler.resolve(retryResponse);
+              } catch (retryErr) {
+                if (retryErr is DioException) {
+                  return handler.next(retryErr);
+                }
+              }
+            }
+          }
+          handler.next(err);
         },
       ),
     );
@@ -53,6 +134,9 @@ class DioController {
           break;
         case HTTPMethods.put:
           response = await _dio.put(_baseUrl + url, data: data);
+          break;
+        case HTTPMethods.patch:
+          response = await _dio.patch(_baseUrl + url, data: data);
           break;
         case HTTPMethods.delete:
           response = await _dio.delete(_baseUrl + url);
@@ -105,6 +189,50 @@ class DioController {
       if (e.response?.statusCode == 401) toLogin();
 
       return ResponseModel(message: message ?? 'Ocurrió un error, intente nuevamente', data: e.response?.data, status: e.response?.statusCode);
+    }
+  }
+
+  static Future<ResponseModel> uploadFile(
+    String url,
+    String fieldName,
+    List<int> bytes,
+    String filename, {
+    bool showLoading = true,
+  }) async {
+    try {
+      if (getx.Get.isSnackbarOpen) getx.Get.back();
+      if (!MyLoading.isLoading && !getx.Get.isSnackbarOpen && showLoading) MyLoading.showLoading();
+
+      final formData = FormData.fromMap({
+        fieldName: MultipartFile.fromBytes(bytes, filename: filename),
+      });
+
+      final response = await _dio.post(
+        _baseUrl + url,
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
+
+      if (MyLoading.isLoading) MyLoading.closeLoading();
+      return ResponseModel(message: response.statusMessage ?? '', data: response.data, status: response.statusCode);
+    } on DioException catch (e) {
+      debugPrint(e.toString());
+      if (MyLoading.isLoading) MyLoading.closeLoading();
+      String? message;
+      final respData = e.response?.data;
+      if (respData is Map) {
+        final rawMsg = respData['message'] ?? respData['error'];
+        if (rawMsg is List && rawMsg.isNotEmpty) {
+          message = rawMsg.first.toString();
+        } else if (rawMsg != null) {
+          message = rawMsg.toString();
+        }
+      }
+      if (showLoading) {
+        MySnackBar.showSnackBarError(message ?? 'Error al subir el archivo');
+      }
+      if (e.response?.statusCode == 401) toLogin();
+      return ResponseModel(message: message ?? 'Error al subir el archivo', data: e.response?.data, status: e.response?.statusCode);
     }
   }
 
@@ -237,4 +365,4 @@ class ReloadView extends StatelessWidget {
   }
 }
 
-enum HTTPMethods { get, post, put, delete }
+enum HTTPMethods { get, post, put, patch, delete }

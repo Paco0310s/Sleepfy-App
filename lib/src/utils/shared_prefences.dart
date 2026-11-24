@@ -18,6 +18,17 @@ class UserPreferences {
     await _preferences.remove('token');
   }
 
+  // Refresh Token
+  static Future<void> setRefreshToken(String token) async {
+    await _preferences.setString('refresh_token', token);
+  }
+
+  static String? get refreshToken => _preferences.getString('refresh_token');
+
+  static Future<void> removeRefreshToken() async {
+    await _preferences.remove('refresh_token');
+  }
+
   // Id
   static Future<void> setId(int id) async {
     await _preferences.setInt('id', id);
@@ -62,6 +73,17 @@ class UserPreferences {
     await _preferences.remove('email');
   }
 
+  // IsAdmin
+  static Future<void> setIsAdmin(bool isAdmin) async {
+    await _preferences.setBool('isAdmin', isAdmin);
+  }
+
+  static bool get isAdmin => _preferences.getBool('isAdmin') ?? false;
+
+  static Future<void> removeIsAdmin() async {
+    await _preferences.remove('isAdmin');
+  }
+
   // Cached AI Routine
   static Future<void> setRoutine(String routine) async {
     await _preferences.setString('cached_routine', routine);
@@ -79,10 +101,12 @@ class UserPreferences {
   // Cerrar sesión completa y limpiar almacenamiento local
   static Future<void> logout() async {
     await _preferences.remove('token');
+    await _preferences.remove('refresh_token');
     await _preferences.remove('id');
     await _preferences.remove('name');
     await _preferences.remove('lastname');
     await _preferences.remove('email');
+    await _preferences.remove('isAdmin');
     await _preferences.remove('cached_routine');
     await _preferences.remove('cached_routine_date');
   }

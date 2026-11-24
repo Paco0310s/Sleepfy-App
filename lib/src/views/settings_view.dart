@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:sleepfy/controllers/dio_controller.dart';
+import 'package:sleepfy/controllers/user_controller.dart';
 import 'package:sleepfy/src/providers/control_dreams_provider.dart';
 import 'package:sleepfy/src/providers/test_provider.dart';
 import 'package:sleepfy/src/providers/theme_provider.dart';
 import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/utils/shared_prefences.dart';
 import 'package:sleepfy/src/views/about_view.dart';
+import 'package:sleepfy/src/views/admin/admin_dashboard_view.dart';
 import 'package:sleepfy/src/views/comments_view.dart';
 import 'package:sleepfy/src/views/information_app_view.dart';
 import 'package:sleepfy/src/views/information_kit_view.dart';
@@ -16,8 +19,26 @@ import 'package:sleepfy/src/views/login_view.dart';
 import 'package:sleepfy/src/widgets/my_text.dart';
 import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 
-class SettingsView extends StatelessWidget {
+class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
+
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> {
+  @override
+  void initState() {
+    super.initState();
+    _syncProfile();
+  }
+
+  Future<void> _syncProfile() async {
+    final updated = await UserController.refreshProfile();
+    if (updated && mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +107,21 @@ class SettingsView extends StatelessWidget {
           ),
           const Gap(20),
 
+          if (UserPreferences.isAdmin) ...[
+            _buildSectionHeader(context, 'ADMINISTRACIÓN'),
+            _SettingsGroupContainer(
+              children: [
+                _SettingsTile(
+                  icon: Icons.admin_panel_settings_outlined,
+                  iconColor: Constants.kSageGreen,
+                  title: 'Panel de Administrador',
+                  onTap: () => Get.to(() => const AdminDashboardView()),
+                ),
+              ],
+            ),
+            const Gap(20),
+          ],
+
           _buildSectionHeader(context, 'BIENESTAR Y RECURSOS'),
           _SettingsGroupContainer(
             children: [
@@ -130,6 +166,11 @@ class SettingsView extends StatelessWidget {
                 textColor: Constants.kErrorColor,
                 showArrow: false,
                 onTap: () async {
+                  await DioController.petition(
+                    HTTPMethods.post,
+                    'auth/logout',
+                    showLoading: false,
+                  );
                   await UserPreferences.logout();
                   if (context.mounted) {
                     Provider.of<TestProvider>(context, listen: false).reset();

@@ -24,10 +24,14 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> completeSessionLogin(UserModel user) async {
     await UserPreferences.setToken(user.token);
+    if (user.refreshToken.isNotEmpty) {
+      await UserPreferences.setRefreshToken(user.refreshToken);
+    }
     await UserPreferences.setId(user.id);
     await UserPreferences.setName(user.name);
     await UserPreferences.setLastName(user.lastName);
     await UserPreferences.setEmail(user.email);
+    await UserPreferences.setIsAdmin(user.isAdmin);
 
     nameController.clear();
     lastNameController.clear();

@@ -1,53 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:sleepfy/controllers/kit_product_controller.dart';
+import 'package:sleepfy/models/kit_product_model.dart';
 import 'package:sleepfy/src/utils/constants.dart';
 import 'package:sleepfy/src/views/home_view.dart';
 import 'package:sleepfy/src/widgets/my_button.dart';
 import 'package:sleepfy/src/widgets/my_text.dart';
 import 'package:sleepfy/src/widgets/my_title_app_bar.dart';
 
-class InformationKitView extends StatelessWidget {
-  InformationKitView({super.key});
+class InformationKitView extends StatefulWidget {
+  const InformationKitView({super.key});
 
-  final List<Map<String, String>> products = [
-    {
-      "title": "Spray de Magnesio",
-      "description":
-          "El Spray de Magnesio a base de Cloruro de Magnesio está enfocado a quienes buscan una alternativa natural para relajar músculos y calmar el sistema nervioso.",
-      "benefits": "◆ Ayuda a relajar los músculos, alivia la tensión acumulada y reduce el estrés nocturno.",
-      "usage": "Aplicar 3-5 atomizaciones en la planta de los pies o cuello antes de dormir.",
-      "warning": "Solo para uso externo. Evitar contacto con ojos y heridas abiertas.",
-    },
-    {
-      "title": "Vela Aromática",
-      "description": "Combina aceites esenciales de lavanda y notas frescas de bosque, perfecta para acompañar la desconexión nocturna.",
-      "benefits": "◆ Lavanda: Relaja y reduce el estrés.\n◆ Bosque: Calma la mente y promueve un sueño profundo.",
-      "usage": "Enciende la vela 30 minutos antes de acostarte. Asegúrate de apagarla antes de dormir.",
-      "warning": "Nunca dejes una vela encendida sin supervisión.",
-    },
-    {
-      "title": "Tés Anti Insomnio",
-      "description": "Infusiones naturales seleccionadas para apaciguar el sistema digestivo y nervioso.",
-      "benefits": "◆ Té de Manzanilla: Sedante natural y antiinflamatorio.\n◆ Té de 7 Azahares: Reduce la ansiedad y propicia el sueño profundo.",
-      "usage": "Tomar una taza tibia 30-45 minutos antes de dormir.",
-      "warning": "Consérvese en un lugar fresco y seco.",
-    },
-    {
-      "title": "Bálsamo Relajante",
-      "description": "Bálsamo botánico formulado para liberar tensión mediante aromaterapia y digitopuntura suave.",
-      "benefits": "◆ Lavanda y Manzanilla: Inducen tranquilidad.\n◆ Vitamina E y Cera de Abeja: Nutren la piel.",
-      "usage": "Aplica suavemente en sienes, detrás de las orejas y en las muñecas antes de acostarte.",
-      "warning": "Uso tópico únicamente. Evitar el contacto con los ojos.",
-    },
-    {
-      "title": "Aromatizante de Espacios",
-      "description": "Bruma ambiental con aceites esenciales de lavanda, manzanilla, violeta y mandarina.",
-      "benefits": "◆ Transforma tu habitación en un santuario oscuro, fresco y aromatizado para el descanso.",
-      "usage": "Rocía 2-4 veces en la almohada y en el ambiente unos minutos antes de dormir.",
-      "warning": "Mantener fuera del alcance de los niños.",
-    },
-  ];
+  @override
+  State<InformationKitView> createState() => _InformationKitViewState();
+}
+
+class _InformationKitViewState extends State<InformationKitView> {
+  List<KitProductModel> _products = [];
+  KitSettingsModel _settings = KitSettingsModel.defaults();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    final results = await Future.wait([
+      KitProductController.getActiveProducts(),
+      KitProductController.getSettings(),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      _products = results[0] as List<KitProductModel>;
+      _settings = results[1] as KitSettingsModel;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +50,24 @@ class InformationKitView extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                return ProductCard(product: products[index], index: index);
-              },
-            ),
+            child: _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Constants.primary(context),
+                    ),
+                  )
+                : RefreshIndicator(
+                    color: Constants.kSageGreen,
+                    onRefresh: _loadProducts,
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      itemCount: _products.length,
+                      itemBuilder: (context, index) {
+                        return ProductCard(product: _products[index], index: index);
+                      },
+                    ),
+                  ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
@@ -90,9 +92,9 @@ class InformationKitView extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  const urlInstagram = 'https://www.instagram.com/_sleepfy/';
-                  const String phone1 = '3921694141';
-                  const String phone2 = '3929308377';
+                  final urlInstagram = _settings.instagramUrl.trim();
+                  final phone1 = _settings.whatsapp1.trim();
+                  final phone2 = _settings.whatsapp2.trim();
 
                   showAdaptiveDialog(
                     context: context,
@@ -104,25 +106,28 @@ class InformationKitView extends StatelessWidget {
                           side: BorderSide(color: Constants.border(context)),
                         ),
                         title: const MyTitleAppBar(title: 'Adquiere tu kit Sleepfy'),
-                        content: const Wrap(
+                        content: Wrap(
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            SocialNetworkItem(
-                              image: 'assets/images/instagram.png',
-                              url: urlInstagram,
-                              text: 'Instagram',
-                            ),
-                            SocialNetworkItem(
-                              image: 'assets/images/whatsapp.png',
-                              url: 'https://wa.me/52$phone1',
-                              text: 'WhatsApp 1',
-                            ),
-                            SocialNetworkItem(
-                              image: 'assets/images/whatsapp.png',
-                              url: 'https://wa.me/52$phone2',
-                              text: 'WhatsApp 2',
-                            ),
+                            if (urlInstagram.isNotEmpty)
+                              SocialNetworkItem(
+                                image: 'assets/images/instagram.png',
+                                url: urlInstagram,
+                                text: 'Instagram',
+                              ),
+                            if (phone1.isNotEmpty)
+                              SocialNetworkItem(
+                                image: 'assets/images/whatsapp.png',
+                                url: 'https://wa.me/52$phone1',
+                                text: 'WhatsApp 1',
+                              ),
+                            if (phone2.isNotEmpty)
+                              SocialNetworkItem(
+                                image: 'assets/images/whatsapp.png',
+                                url: 'https://wa.me/52$phone2',
+                                text: 'WhatsApp 2',
+                              ),
                           ],
                         ),
                       );
@@ -139,13 +144,15 @@ class InformationKitView extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  final Map<String, String> product;
+  final KitProductModel product;
   final int index;
 
   const ProductCard({super.key, required this.product, required this.index});
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = product.imageUrl;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -155,28 +162,49 @@ class ProductCard extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Constants.surfaceLight(context),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.spa_outlined,
-            color: Constants.kSageGreen,
-            size: 21,
-          ),
-        ),
-        title: MyText(
-          product["title"]!,
-          fontWeight: FontWeight.w600,
-          fontSize: 14.5,
-          color: Constants.textPrimary(context),
+        leading: imageUrl != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  imageUrl,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _fallbackIcon(context),
+                ),
+              )
+            : _fallbackIcon(context),
+        title: Row(
+          children: [
+            Expanded(
+              child: MyText(
+                product.title,
+                fontWeight: FontWeight.w600,
+                fontSize: 14.5,
+                color: Constants.textPrimary(context),
+              ),
+            ),
+            if (product.stock <= 0)
+              Container(
+                margin: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Constants.kSoftRose.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const MyText(
+                  'Agotado',
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  color: Constants.kSoftRose,
+                ),
+              ),
+          ],
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 2),
           child: MyText(
-            product["description"]!,
+            product.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             fontSize: 12,
@@ -190,37 +218,91 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _fallbackIcon(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Constants.surfaceLight(context),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(
+        Icons.spa_outlined,
+        color: Constants.kSageGreen,
+        size: 21,
+      ),
+    );
+  }
 }
 
 class ProductDetailScreen extends StatelessWidget {
-  final Map<String, String> product;
+  final KitProductModel product;
 
   const ProductDetailScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = product.imageUrl;
+
     return Scaffold(
       backgroundColor: Constants.background(context),
       appBar: AppBar(
-        title: MyTitleAppBar(title: product["title"]!),
+        title: MyTitleAppBar(title: product.title),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (imageUrl != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.network(
+                  imageUrl,
+                  width: double.infinity,
+                  height: 210,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
+              const Gap(16),
+            ],
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: Constants.surface(context),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Constants.border(context)),
               ),
-              child: MyText(
-                product["description"]!,
-                fontSize: 14,
-                color: Constants.textPrimary(context),
-                height: 1.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MyText(
+                    product.description,
+                    fontSize: 14,
+                    color: Constants.textPrimary(context),
+                    height: 1.5,
+                  ),
+                  const Gap(12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: (product.stock > 0 ? Constants.kSageGreen : Constants.kSoftRose)
+                          .withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: MyText(
+                      product.stock > 0
+                          ? 'Disponible en stock (${product.stock})'
+                          : 'Temporalmente agotado',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: product.stock > 0 ? Constants.kSageGreen : Constants.kSoftRose,
+                    ),
+                  ),
+                ],
               ),
             ),
             const Gap(16),
@@ -229,7 +311,7 @@ class ProductDetailScreen extends StatelessWidget {
               title: 'Beneficios',
               icon: Icons.check_circle_outline_rounded,
               iconColor: Constants.kSageGreen,
-              content: product["benefits"]!,
+              content: product.benefits,
             ),
             const Gap(12),
             _buildDetailSection(
@@ -237,16 +319,18 @@ class ProductDetailScreen extends StatelessWidget {
               title: 'Modo de uso',
               icon: Icons.touch_app_outlined,
               iconColor: Constants.accent(context),
-              content: product["usage"]!,
+              content: product.usage,
             ),
-            const Gap(12),
-            _buildDetailSection(
-              context,
-              title: 'Precauciones',
-              icon: Icons.info_outline_rounded,
-              iconColor: const Color(0xFFD49E3D),
-              content: product["warning"]!,
-            ),
+            if (product.warning != null && product.warning!.trim().isNotEmpty) ...[
+              const Gap(12),
+              _buildDetailSection(
+                context,
+                title: 'Precauciones',
+                icon: Icons.info_outline_rounded,
+                iconColor: const Color(0xFFD49E3D),
+                content: product.warning!,
+              ),
+            ],
           ],
         ),
       ),
@@ -261,6 +345,7 @@ class ProductDetailScreen extends StatelessWidget {
     required String content,
   }) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Constants.surface(context),

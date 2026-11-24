@@ -1,6 +1,7 @@
 import 'package:sleepfy/controllers/dio_controller.dart';
 import 'package:sleepfy/models/response_model.dart';
 import 'package:sleepfy/models/user_model.dart';
+import 'package:sleepfy/src/utils/shared_prefences.dart';
 
 class UserController {
   static Future<ResponseModel> loginRaw(Map<String, dynamic> data) async {
@@ -57,5 +58,24 @@ class UserController {
       },
     );
     return resp.status == 200;
+  }
+
+  static Future<bool> refreshProfile() async {
+    if (UserPreferences.token == null || UserPreferences.token!.isEmpty) return false;
+    final ResponseModel resp = await DioController.petition(
+      HTTPMethods.get,
+      'auth/me',
+      showLoading: false,
+    );
+
+    if (resp.status == 200 && resp.data is Map<String, dynamic>) {
+      final user = UserModel.fromJson(resp.data as Map<String, dynamic>);
+      await UserPreferences.setName(user.name);
+      await UserPreferences.setLastName(user.lastName);
+      await UserPreferences.setEmail(user.email);
+      await UserPreferences.setIsAdmin(user.isAdmin);
+      return true;
+    }
+    return false;
   }
 }
